@@ -32,7 +32,8 @@ export const loginUserAction = createAsyncThunk('users/login', async({email, pas
     }
 })
 
-//register action
+
+//get user profile action
 export const registerUserAction = createAsyncThunk('users/register', async({fullname, email, password}, {rejectWithValue}) => {
     try {
         const {data} = await apiClient.post('auth/register', {
@@ -40,6 +41,37 @@ export const registerUserAction = createAsyncThunk('users/register', async({full
             password,
             fullname,
         })
+        
+        return data;
+    } catch (error) {
+        return rejectWithValue(error?.response?.data)
+    }
+})
+
+//update user shipping address action
+export const updateUserShippingAddressAction = createAsyncThunk('users/update-shipping-address', async({firstName, lastName, address, city, postalCode, province, phoneNumber, country}, {rejectWithValue}) => {
+    try {
+        const { data } = await apiClient.patch("users/update/shipping", {
+          firstName,
+          lastName,
+          address,
+          city,
+          postalCode,
+          province,
+          phoneNumber,
+          country,
+        });
+        
+        return data;
+    } catch (error) {
+        return rejectWithValue(error?.response?.data)
+    }
+})
+
+//get user profile address action
+export const getUserProfileAction = createAsyncThunk('users/profile-fetched', async(payload, {rejectWithValue}) => {
+    try {
+        const { data } = await apiClient.get("users/profile");
         
         return data;
     } catch (error) {
@@ -91,10 +123,45 @@ const usersSlice = createSlice({
             });
         })
 
-        /* //reset error action
+        //update shipping
+        builder.addCase(updateUserShippingAddressAction.pending, (state) => {
+            state.loading = true
+        });
+        builder.addCase(updateUserShippingAddressAction.fulfilled, (state, action) => {
+            state.user = action.payload.user
+            state.loading= false;
+            toast.success(action.payload.message, {
+                position: "top-center"
+            })
+        });
+        builder.addCase(updateUserShippingAddressAction.rejected, (state, action) => {
+            state.error = action.payload;
+            state.loading = false;
+            toast.error(action.payload.message, {
+              position: "top-center",
+            });
+        })
+        //get user profile
+        builder.addCase(getUserProfileAction.pending, (state) => {
+            state.loading = true
+        });
+        builder.addCase(getUserProfileAction.fulfilled, (state, action) => {
+            state.profile = action.payload
+            state.loading= false;
+           
+        });
+        builder.addCase(getUserProfileAction.rejected, (state, action) => {
+            state.error = action.payload;
+            state.loading = false;
+            toast.error(action.payload.message, {
+              position: "top-center",
+            });
+        })
+
+        //reset error action
         builder.addCase(resetErrAction.pending, (state) => {
             state.error = null
-        }) */
+        }) 
     }
 })
 

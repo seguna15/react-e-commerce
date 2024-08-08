@@ -12,28 +12,37 @@ import logo from "../../assets/logo3.png";
 import useLogin from "../../shared/hooks/useLogin";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchCategoryAction } from "../../redux/slices/categories/categoriesSlices";
+import { getCartItemsFromLocalStorageAction } from "../../redux/slices/cart/cartSlices";
+
 
 export default function Navbar() {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(fetchCategoryAction())
-  }, [dispatch])
+    dispatch(fetchCategoryAction());
+  }, [dispatch]);
 
   //get data from store
 
-  const {categories} = useSelector((state) => state?.categories)
-  
-  const categoriesToDisplay = categories.slice(0,4);
+  const { categories } = useSelector((state) => state?.categories);
+
+  const categoriesToDisplay = categories.slice(0, 4);
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  //get cart items from local storage
-  let cartItemsFromLocalStorage;
+  //get data from store
+  useEffect(() => {
+    dispatch(getCartItemsFromLocalStorageAction());
+  }, [dispatch]);
+
+  // get cart items from store
+  const { cartItems } = useSelector((state) => state?.carts);
+
+  
 
   //get logged in user from localStorage
-  const isLoggedIn = useLogin()
- 
+  const isLoggedIn = useLogin();
+
   return (
     <div className="bg-white">
       {/* Mobile menu */}
@@ -87,7 +96,7 @@ export default function Navbar() {
                       </a>
                     </div>
                   ))} */}
-                  {categoriesToDisplay?.length > 0 && (
+                  {categoriesToDisplay?.length > 0 &&
                     categoriesToDisplay?.map((category) => {
                       return (
                         <>
@@ -100,8 +109,7 @@ export default function Navbar() {
                           </Link>
                         </>
                       );
-                    })
-                  )}
+                    })}
                 </div>
 
                 {/* mobile links register/login */}
@@ -154,7 +162,7 @@ export default function Navbar() {
                       Create an account
                     </Link>
                     <span className="w-px h-6 bg-gray-600" aria-hidden="true" />
-                    <Link 
+                    <Link
                       to="/login"
                       className="text-sm font-medium text-white hover:text-gray-100"
                     >
@@ -187,7 +195,7 @@ export default function Navbar() {
                     {/*  menus links*/}
                     <Popover.Group className="ml-8">
                       <div className="flex justify-center h-full space-x-8">
-                        {categoriesToDisplay?.length > 0 && (
+                        {categoriesToDisplay?.length > 0 &&
                           categoriesToDisplay?.map((category) => {
                             return (
                               <>
@@ -200,8 +208,7 @@ export default function Navbar() {
                                 </Link>
                               </>
                             );
-                          })
-                        )}
+                          })}
                       </div>
                     </Popover.Group>
                   </div>
@@ -260,8 +267,8 @@ export default function Navbar() {
                             aria-hidden="true"
                           />
                           <span className="ml-2 text-sm font-medium text-gray-700 group-hover:text-gray-800">
-                            {cartItemsFromLocalStorage?.length > 0
-                              ? cartItemsFromLocalStorage.length
+                            {cartItems?.length > 0
+                              ? cartItems.length
                               : 0}
                           </span>
                         </Link>

@@ -22,7 +22,7 @@ export const createCouponAction = createAsyncThunk(
   "/coupons/create",
   async ({code, discount, startDate, endDate}, { rejectWithValue, getState, dispatch }) => {
     try {
-      oad;
+      
       //make request
       const { data } = await apiClient.post("/coupons", {
         code,

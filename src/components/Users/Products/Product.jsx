@@ -115,7 +115,7 @@ export default function Product() {
                     <StarIcon
                       key={rating}
                       className={classNames(
-                        productDetails?.product?.averageRating > rating
+                        parseInt(product?.averageRating) > rating
                           ? "text-yellow-400"
                           : "text-gray-200",
                         "h-5 w-5 flex-shrink-0"
@@ -245,12 +245,22 @@ export default function Product() {
                 </RadioGroup>
               </div>
               {/* add to cart */}
-              <button
-                onClick={() => addToCartHandler()}
-                className="flex items-center justify-center w-full px-8 py-3 mt-8 text-base font-medium text-white bg-indigo-600 border border-transparent rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-              >
-                Add to cart
-              </button>
+              {product?.qtyLeft <= 0 ? (
+                <button
+                  style={{ cursor: "not-allowed" }}
+                  disabled
+                  className="flex items-center justify-center w-full px-8 py-3 mt-8 text-base font-medium text-white bg-gray-600 border border-transparent rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                >
+                  Add to cart
+                </button>
+              ) : (
+                <button
+                  onClick={() => addToCartHandler()}
+                  className="flex items-center justify-center w-full px-8 py-3 mt-8 text-base font-medium text-white bg-indigo-600 border border-transparent rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                >
+                  Add to cart
+                </button>
+              )}
               {/* proceed to check */}
 
               {cartItems?.length > 0 && (
@@ -312,7 +322,7 @@ export default function Product() {
           </h2>
 
           <div className="pb-10 mt-6 space-y-10 border-t border-b border-gray-200 divide-y divide-gray-200">
-            {productDetails?.product?.reviews.map((review) => (
+            {product?.reviews?.map((review) => (
               <div
                 key={review._id}
                 className="pt-10 lg:grid lg:grid-cols-12 lg:gap-x-8"
@@ -343,21 +353,18 @@ export default function Product() {
                     <h3 className="text-sm font-medium text-gray-900">
                       {review?.message}
                     </h3>
-
-                    <div
-                      className="mt-3 space-y-6 text-sm text-gray-500"
-                      dangerouslySetInnerHTML={{ __html: review.content }}
-                    />
                   </div>
                 </div>
 
                 <div className="flex items-center mt-6 text-sm lg:col-span-4 lg:col-start-1 lg:row-start-1 lg:mt-0 lg:flex-col lg:items-start xl:col-span-3">
-                  <p className="font-medium text-gray-900">{review.author}</p>
+                  <p className="font-medium text-gray-900">
+                    {review.user?.fullname}
+                  </p>
                   <time
                     dateTime={review.datetime}
                     className="pl-4 ml-4 text-gray-500 border-l border-gray-200 lg:ml-0 lg:mt-2 lg:border-0 lg:pl-0"
                   >
-                    {review.date}
+                    {new Date(review.createdAt).toLocaleDateString()}
                   </time>
                 </div>
               </div>

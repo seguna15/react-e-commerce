@@ -27,13 +27,13 @@ import ProductsFilters from "./components/Users/Products/ProductsFilters";
 import CustomerProfile from "./components/Users/Profile/CustomerProfile";
 import AddReview from "./components/Users/Reviews/AddReview";
 import UpdateCategory from "./components/Admin/Categories/UpdateCategory";
-
-import OrdersList from "./components/Admin/Orders/OdersList";
+import OrdersList from "./components/Admin/Orders/OrdersList";
 import ManageOrders from "./components/Admin/Orders/ManageOrders";
 import Customers from "./components/Admin/Orders/Customers";
 import BrandsColorsList from "./components/Admin/Categories/BrandsColorsList";
 import AuthRoute from "./components/AuthRoute/AuthRoute";
 import AdminRoutes from "./components/AuthRoute/AdminRoutes";
+import ThanksForOrdering from "./components/Users/Products/ThanksForOrdering";
 
 
 
@@ -41,11 +41,18 @@ const App = () => {
   return (
     <BrowserRouter>
       <ToastContainer />
-      <Navbar /> 
+      <Navbar />
       {/* hide navbar if admin */}
       <Routes>
         {/* admin route */}
-        <Route path="admin" element={<AdminRoutes><AdminDashboard/></AdminRoutes>}>
+        <Route
+          path="admin"
+          element={
+            <AdminRoutes>
+              <AdminDashboard />
+            </AdminRoutes>
+          }
+        >
           <Route path="" element={<OrdersList />} />
           <Route path="add-product" element={<AddProduct />} />
           <Route path="manage-products" element={<ManageStocks />} />
@@ -74,7 +81,7 @@ const App = () => {
         <Route path="/products-filters" element={<ProductsFilters />} />
         <Route path="/products/:id" element={<Product />} />
         <Route path="/all-categories" element={<AllCategories />} />
-
+        <Route path="success" element={<ThanksForOrdering />} />
         {/* review */}
         <Route path="/add-review/:id" element={<AddReview />} />
 
