@@ -2,21 +2,33 @@ import { Link } from "react-router-dom";
 import LoadingComponent from "../../../shared/components/LoadingComponent";
 import NoDataFound from "../../../shared/components/NoDataFound";
 import { toast } from "react-toastify";
+import { useDispatch, useSelector } from "react-redux";
+import { useEffect } from "react";
+import { deleteCouponAction, fetchCouponsAction } from "../../../redux/slices/coupons/couponsSlice";
 
 export default function ManageCoupons() {
+  //dispatch
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(fetchCouponsAction())
+  },[dispatch])
+
   //get coupons
-  const { coupons, loading, error } = {};
-
+  const { coupons, loading } = useSelector(state => state?.coupons);
+  
   //---deleteHandler---
-
-  const deleteCouponHandler = (id) => {};
+  const deleteCouponHandler = (id) => {
+    dispatch(deleteCouponAction(id));
+    window.location.reload();
+  };
 
   return (
     <div className="px-4 sm:px-6 lg:px-8">
       <div className="sm:flex sm:items-center">
         <div className="sm:flex-auto">
-          <h1 className="text-xl font-semibold text-gray-900">
-            Manage Coupons - [{coupons?.coupons?.length}]
+          <h1 className="py-3 text-xl font-semibold text-gray-900">
+            Manage Coupons - [{coupons?.length}]
           </h1>
           <p className="mt-2 text-sm text-gray-700">
             List of all coupons in the system
@@ -25,18 +37,14 @@ export default function ManageCoupons() {
         <div className="mt-4 sm:mt-0 sm:ml-16 sm:flex-none">
           <button
             type="button"
-            className="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-white bg-indigo-600 border border-transparent rounded-md shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:w-auto">
+            className="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-white bg-indigo-600 border border-transparent rounded-md shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:w-auto"
+          >
             Add New Coupon
           </button>
         </div>
       </div>
       {loading ? (
         <LoadingComponent />
-      ) : error ? (
-        toast.error(error?.message || "Something went wrong, please try again",{
-          position: "top-center"
-        })
-        
       ) : coupons?.coupons?.length <= 0 ? (
         <NoDataFound />
       ) : (
@@ -50,49 +58,73 @@ export default function ManageCoupons() {
                       <tr>
                         <th
                           scope="col"
-                          className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">
+                          className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6"
+                        >
                           Code
                         </th>
                         <th
                           scope="col"
-                          className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                          className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                        >
                           Percentage (%)
                         </th>
                         <th
                           scope="col"
-                          className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                          className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                        >
+                          Status
+                        </th>
+                        <th
+                          scope="col"
+                          className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                        >
                           Start Date
                         </th>
                         <th
                           scope="col"
-                          className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                          className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                        >
                           End Date
                         </th>
                         <th
                           scope="col"
-                          className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                          className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                        >
                           Days Left
                         </th>
                         <th
                           scope="col"
-                          className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                          className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                        >
                           Edit
                         </th>
                         <th
                           scope="col"
-                          className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                          className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                        >
                           Delete
                         </th>
                       </tr>
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200">
-                      {coupons?.coupons?.map((coupon) => (
+                      {coupons?.map((coupon) => (
                         <tr key={coupon._id}>
                           <td className="py-4 pl-4 pr-3 text-sm font-medium text-gray-900 whitespace-nowrap sm:pl-6">
                             {coupon?.code}
                           </td>
                           <td className="px-3 py-4 text-sm text-gray-500 whitespace-nowrap">
                             {coupon?.discount}
+                          </td>
+                          <td className="px-3 py-4 text-sm text-gray-500 whitespace-nowrap">
+                            {coupon?.isExpired ? (
+                              <span className="inline-flex px-2 text-xs font-semibold leading-5 text-red-600 bg-red-100 rounded-full">
+                                Expired
+                              </span>
+                            ) : (
+                              <span className="inline-flex px-2 text-xs font-semibold leading-5 text-green-800 bg-green-100 rounded-full">
+                                Active
+                              </span>
+                            )}
                           </td>
                           <td className="px-3 py-4 text-sm text-gray-500 whitespace-nowrap">
                             {new Date(coupon.startDate)?.toLocaleDateString()}
@@ -107,14 +139,16 @@ export default function ManageCoupons() {
                           {/* edit icon */}
                           <td className="px-3 py-4 text-sm text-gray-500 whitespace-nowrap">
                             <Link
-                              to={`/admin/manage-coupon/edit/${coupon.code}`}>
+                              to={`/admin/manage-coupon/edit/${coupon.code}`}
+                            >
                               <svg
                                 xmlns="http://www.w3.org/2000/svg"
                                 fill="none"
                                 viewBox="0 0 24 24"
                                 strokeWidth={1.5}
                                 stroke="currentColor"
-                                className="w-6 h-6 text-indigo-600 cursor-pointer">
+                                className="w-6 h-6 text-indigo-600 cursor-pointer"
+                              >
                                 <path
                                   strokeLinecap="round"
                                   strokeLinejoin="round"
@@ -126,14 +160,16 @@ export default function ManageCoupons() {
                           {/* delete */}
                           <td className="px-3 py-4 text-sm text-gray-500 whitespace-nowrap">
                             <button
-                              onClick={() => deleteCouponHandler(coupon?._id)}>
+                              onClick={() => deleteCouponHandler(coupon?._id)}
+                            >
                               <svg
                                 xmlns="http://www.w3.org/2000/svg"
                                 fill="none"
                                 viewBox="0 0 24 24"
                                 stroke-width="1.5"
                                 stroke="currentColor"
-                                className="w-6 h-6 text-indigo-600 cursor-pointer">
+                                className="w-6 h-6 text-indigo-600 cursor-pointer"
+                              >
                                 <path
                                   stroke-linecap="round"
                                   stroke-linejoin="round"

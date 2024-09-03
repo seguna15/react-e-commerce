@@ -10,6 +10,7 @@ import {
 const initialState = {
   coupons: [],
   coupon: null,
+  currentCoupon: null,
   loading: false,
   error: null,
   isAdded: false,
@@ -25,6 +26,26 @@ export const createCouponAction = createAsyncThunk(
       
       //make request
       const { data } = await apiClient.post("/coupons", {
+        code,
+        discount,
+        startDate,
+        endDate,
+      });
+      return data;
+    } catch (error) {
+      return rejectWithValue(error?.response?.data);
+    }
+  }
+);
+
+//update coupons
+export const updateCouponAction = createAsyncThunk(
+  "/coupons/update",
+  async ({code, discount, startDate, endDate, id}, { rejectWithValue, getState, dispatch }) => {
+    try {
+      
+      //make request
+      const { data } = await apiClient.put(`/coupons/update/${id}`, {
         code,
         discount,
         startDate,
@@ -64,27 +85,98 @@ export const fetchCouponAction = createAsyncThunk(
   }
 );
 
+export const fetchCurrentCouponAction = createAsyncThunk(
+  "/coupons/fetchCurrent",
+  async (payload, { rejectWithValue, getState, dispatch }) => {
+    try {
+      //make request
+      const { data } = await apiClient.get("/coupons/current");
+      return data;
+    } catch (error) {
+      return rejectWithValue(error?.response?.data);
+    }
+  }
+);
+
+
+//delete coupon
+export const deleteCouponAction = createAsyncThunk(
+  "/coupons/delete",
+  async (id, { rejectWithValue, getState, dispatch }) => {
+    try {
+      //make request
+      const { data } = await apiClient.delete(`/coupons/delete/${id}`);
+      return data;
+    } catch (error) {
+      return rejectWithValue(error?.response?.data);
+    }
+  }
+);
+
 //slice
 const couponSlice = createSlice({
   name: "coupons",
   initialState,
   extraReducers: (builder) => {
-    //create categories
+    //create coupon
     builder.addCase(createCouponAction.pending, (state) => {
       state.loading = true;
     });
     builder.addCase(createCouponAction.fulfilled, (state, action) => {
       state.loading = false;
-      state.coupon = action.payload;
-      state.isAdded = true;
+
+      state.isDeleted = true;
       toast.success(`${action.payload.message}`, {
         position: "top-center",
       });
     });
     builder.addCase(createCouponAction.rejected, (state, action) => {
       state.loading = false;
+      state.isDeleted = false;
+      state.error = action.payload;
+      toast.error(`${action.payload.message}`, {
+        position: "top-center",
+      });
+    });
+
+    //update coupon
+    builder.addCase(updateCouponAction.pending, (state) => {
+      state.loading = true;
+    });
+    builder.addCase(updateCouponAction.fulfilled, (state, action) => {
+      state.loading = false;
+      state.coupon = action.payload;
+      state.isUpdated = true;
+      toast.success(`${action.payload.message}`, {
+        position: "top-center",
+      });
+    });
+    builder.addCase(updateCouponAction.rejected, (state, action) => {
+      state.loading = false;
       state.coupon = null;
-      state.isAdded = false;
+      state.isUpdated = false;
+      state.error = action.payload;
+      toast.error(`${action.payload.message}`, {
+        position: "top-center",
+      });
+    });
+
+    //delete coupon
+    builder.addCase(deleteCouponAction.pending, (state) => {
+      state.loading = true;
+    });
+    builder.addCase(deleteCouponAction.fulfilled, (state, action) => {
+      state.loading = false;
+      state.coupon = action.payload;
+      state.isUpdated = true;
+      toast.success(`${action.payload.message}`, {
+        position: "top-center",
+      });
+    });
+    builder.addCase(deleteCouponAction.rejected, (state, action) => {
+      state.loading = false;
+      state.coupon = null;
+      state.isUpdated = false;
       state.error = action.payload;
       toast.error(`${action.payload.message}`, {
         position: "top-center",
@@ -128,18 +220,38 @@ const couponSlice = createSlice({
       state.isAdded = false;
       state.error = action.payload;
       toast.error(`${action.payload.message}`, {
-         position: "top-center",
-       });
+        position: "top-center",
+      });
+    });
+
+    //fetch current coupon
+    builder.addCase(fetchCurrentCouponAction.pending, (state) => {
+      state.loading = true;
+    });
+    builder.addCase(fetchCurrentCouponAction.fulfilled, (state, action) => {
+      state.loading = false;
+      state.currentCoupon = action.payload.coupon;
+      
+    });
+    builder.addCase(fetchCurrentCouponAction.rejected, (state, action) => {
+      state.loading = false;
+      state.currentCoupon = null;
+      state.error = action.payload;
+      toast.error(`${action.payload.message}`, {
+        position: "top-center",
+      });
     });
 
     //reset success action
     builder.addCase(resetSuccessAction.pending, (state, action) => {
       state.isAdded = false;
+      state.isUpdated = false;
       state.error = null;
     });
     // reset error action
     builder.addCase(resetErrAction.pending, (state, action) => {
       state.isAdded = false;
+      state.isUpdated = false;
       state.error = null;
     });
   },

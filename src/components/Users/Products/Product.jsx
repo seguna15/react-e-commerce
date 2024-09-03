@@ -34,7 +34,7 @@ export default function Product() {
   const [selectedSize, setSelectedSize] = useState("");
   const [selectedColor, setSelectedColor] = useState("");
 
-  let productDetails = {};
+
   
   //get id from params
   const { id } = useParams();

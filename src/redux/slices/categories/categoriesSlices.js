@@ -37,13 +37,14 @@ export const createCategoryAction = createAsyncThunk(
 );
 
 //fetch all categories
-export const fetchCategoryAction = createAsyncThunk(
+export const fetchCategoriesAction = createAsyncThunk(
     "/categories/fetchAll",
     async (payload, {rejectWithValue, getState, dispatch}) => {
         try{
         
             //make request
             const {data} = await apiClient.get("/categories",);
+            
             return data;
         }catch (error) {
             console.log(error)
@@ -80,15 +81,15 @@ const categorySlice = createSlice({
         })
 
         //fetch all categories
-        builder.addCase(fetchCategoryAction.pending, (state) => {
+        builder.addCase(fetchCategoriesAction.pending, (state) => {
             state.loading = true
         })
-        builder.addCase(fetchCategoryAction.fulfilled, (state, action) => {
+        builder.addCase(fetchCategoriesAction.fulfilled, (state, action) => {
             state.loading = false;
             state.categories = action.payload.categories;
             
         })
-        builder.addCase(fetchCategoryAction.rejected, (state, action) => {
+        builder.addCase(fetchCategoriesAction.rejected, (state, action) => {
             state.loading = false;
             state.categories = null;
             state.error = action.payload

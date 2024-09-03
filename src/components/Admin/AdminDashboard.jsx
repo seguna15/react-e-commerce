@@ -1,4 +1,4 @@
-import { Fragment, useState } from "react";
+import { Fragment, useContext, useState } from "react";
 import { Dialog, Menu, Transition } from "@headlessui/react";
 import { Link, Outlet } from "react-router-dom";
 import {ordersLinks,productsLinks,couponsLinks,CategoryLinks,colorsLinks,brandsLinks} from '../../shared/data/data'
@@ -8,6 +8,9 @@ import {
   XMarkIcon,
 } from "@heroicons/react/24/outline";
 import logo from "../../assets/logo3.png";
+import { logoutAction } from "../../redux/slices/users/usersSlice";
+import { useDispatch } from "react-redux";
+import useProfile from "../../shared/hooks/useProfile";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -16,7 +19,20 @@ function classNames(...classes) {
 
 
 export default function AdminDashboard() {
+  //dispatch
+  const dispatch = useDispatch();
+  
   const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  //logoutHandler
+  const logoutHandler = () => {
+    dispatch(logoutAction());
+  };
+
+  
+  const {profile} = useProfile(dispatch);
+
+  
 
   return (
     <>
@@ -203,7 +219,7 @@ export default function AdminDashboard() {
         {/* Static sidebar for desktop */}
         <div className="hidden lg:fixed lg:inset-y-0 lg:flex lg:w-64 lg:flex-col">
           {/* Sidebar component, swap this element with another sidebar if you like */}
-          <div className="flex flex-col flex-grow pt-5 pb-4 overflow-y-auto bg-cyan-900">
+          <div className="flex flex-col flex-grow pt-32 pb-4 overflow-y-auto bg-cyan-900">
             <nav
               className="flex flex-col flex-1 mt-5 overflow-y-auto divide-y divide-cyan-800"
               aria-label="Sidebar"
@@ -319,6 +335,35 @@ export default function AdminDashboard() {
                   ))}
                 </div>
               </div>
+              {/**Logout */}
+              <div className="pt-3 mt-3">
+                <div className="px-1 space-y-1 ">
+                  <button
+                    onClick={logoutHandler}
+                    className="flex items-center gap-4 px-4 py-2 text-sm font-medium leading-6 rounded-md group text-cyan-100 hover:bg-cyan-600 hover:text-white"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 20 20"
+                      fill="currentColor"
+                      className="size-6"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M3 4.25A2.25 2.25 0 0 1 5.25 2h5.5A2.25 2.25 0 0 1 13 4.25v2a.75.75 0 0 1-1.5 0v-2a.75.75 0 0 0-.75-.75h-5.5a.75.75 0 0 0-.75.75v11.5c0 .414.336.75.75.75h5.5a.75.75 0 0 0 .75-.75v-2a.75.75 0 0 1 1.5 0v2A2.25 2.25 0 0 1 10.75 18h-5.5A2.25 2.25 0 0 1 3 15.75V4.25Z"
+                        clipRule="evenodd"
+                      />
+                      <path
+                        fillRule="evenodd"
+                        d="M19 10a.75.75 0 0 0-.75-.75H8.704l1.048-.943a.75.75 0 1 0-1.004-1.114l-2.5 2.25a.75.75 0 0 0 0 1.114l2.5 2.25a.75.75 0 1 0 1.004-1.114l-1.048-.943h9.546A.75.75 0 0 0 19 10Z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+
+                    <span>Logout</span>
+                  </button>
+                </div>
+              </div>
             </nav>
           </div>
         </div>
@@ -342,11 +387,16 @@ export default function AdminDashboard() {
                   <div className="flex-1 min-w-0">
                     {/* Profile */}
                     <div className="flex items-center">
-                      <img
-                        className="hidden w-16 h-16 rounded-full sm:block"
-                        src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2.6&w=256&h=256&q=80"
-                        alt=""
-                      />
+                     
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                        className="hidden w-16 h-16 rounded-full sm:block size-16"
+                      >
+                        <path d="M10 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM3.465 14.493a1.23 1.23 0 0 0 .41 1.412A9.957 9.957 0 0 0 10 18c2.31 0 4.438-.784 6.131-2.1.43-.333.604-.903.408-1.41a7.002 7.002 0 0 0-13.074.003Z" />
+                      </svg>
+
                       <div>
                         <div className="flex items-center">
                           <img
@@ -355,7 +405,7 @@ export default function AdminDashboard() {
                             alt=""
                           />
                           <h1 className="ml-3 text-2xl font-bold leading-7 text-gray-900 sm:truncate sm:leading-9">
-                            Good morning, Emilia Birch
+                            {profile.fullname}
                           </h1>
                         </div>
                         <dl className="flex flex-col mt-6 sm:ml-3 sm:mt-1 sm:flex-row sm:flex-wrap">
@@ -393,7 +443,7 @@ export default function AdminDashboard() {
                                 d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
                               ></path>
                             </svg>
-                            Date Joined: 12/12/2020
+                            {new Date(profile.createdAt).toLocaleDateString()}
                           </dd>
                           {/* email */}
                           <dd className="flex items-center mt-3 text-sm font-medium text-gray-500 sm:mr-6 sm:mt-0">
@@ -411,7 +461,7 @@ export default function AdminDashboard() {
                                 d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207"
                               ></path>
                             </svg>
-                            admin@gmail.com
+                            {profile.email}
                           </dd>
                         </dl>
                       </div>

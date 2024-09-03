@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useState } from "react";
+import { Fragment, useContext, useEffect, useState } from "react";
 import { Dialog, Popover, Tab, Transition } from "@headlessui/react";
 import {
   Bars3Icon,
@@ -11,15 +11,18 @@ import { Link } from "react-router-dom";
 import logo from "../../assets/logo3.png";
 import useLogin from "../../shared/hooks/useLogin";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchCategoryAction } from "../../redux/slices/categories/categoriesSlices";
+import { fetchCategoriesAction } from "../../redux/slices/categories/categoriesSlices";
 import { getCartItemsFromLocalStorageAction } from "../../redux/slices/cart/cartSlices";
+import { logoutAction } from "../../redux/slices/users/usersSlice";
+import {  fetchCurrentCouponAction } from "../../redux/slices/coupons/couponsSlice";
+import { AuthContext } from "../../App";
 
 
 export default function Navbar() {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(fetchCategoryAction());
+    dispatch(fetchCategoriesAction());
   }, [dispatch]);
 
   //get data from store
@@ -38,10 +41,32 @@ export default function Navbar() {
   // get cart items from store
   const { cartItems } = useSelector((state) => state?.carts);
 
-  
-
   //get logged in user from localStorage
   const isLoggedIn = useLogin();
+
+  //get profile from store
+  //const profile = useProfile();
+  const isAdmin = useContext(AuthContext)
+  
+ 
+  //logoutHandler
+  const logoutHandler = () => {
+    dispatch(logoutAction());
+    window.location.reload();
+  };
+
+  //dispatch fetch coupons actions
+  
+  useEffect(() => {
+    dispatch(fetchCurrentCouponAction());
+  }, [dispatch]);
+
+  //get coupons
+  const { currentCoupon, loading } = useSelector((state) => state?.coupons);
+ 
+  //get current coupon
+  const coupon = currentCoupon?.[0];
+  
 
   return (
     <div className="bg-white">
@@ -145,34 +170,43 @@ export default function Navbar() {
 
       <header className="relative z-10">
         <nav aria-label="Top">
-          {/* Top navigation  desktop*/}
-          <div className="bg-gray-900">
-            <div className="flex items-center justify-between h-10 px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
-              <p className="flex-1 text-sm font-medium text-center text-white lg:flex-none">
-                Get free delivery on orders over $100
-              </p>
-
-              <div className="hidden lg:flex lg:flex-1 lg:items-center lg:justify-end lg:space-x-6">
-                {!isLoggedIn && (
-                  <>
-                    <Link
-                      to="/register"
-                      className="text-sm font-medium text-white hover:text-gray-100"
-                    >
-                      Create an account
-                    </Link>
-                    <span className="w-px h-6 bg-gray-600" aria-hidden="true" />
-                    <Link
-                      to="/login"
-                      className="text-sm font-medium text-white hover:text-gray-100"
-                    >
-                      Sign in
-                    </Link>
-                  </>
-                )}
+          {/* Coupon nav  bar*/}
+          {!coupon?.isExpired && (
+            <div className="bg-yellow-500">
+              <div className="flex items-center justify-between h-10 px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
+                <p
+                  style={{ textAlign: "center", width: "100%" }}
+                  className="flex-1 text-sm font-medium text-center text-gray-800 lg:flex-none"
+                >
+                  {coupon
+                    ? `${coupon?.code} - ${coupon?.discount}%, ${coupon?.daysLeft}`
+                    : "No Sales at the moment"}
+                </p>
               </div>
             </div>
-          </div>
+          )}
+          {/* Top navigation  desktop*/}
+          {!isLoggedIn && (
+            <div className="bg-gray-800">
+              <div className="flex items-center justify-between h-10 px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
+                <div className="hidden lg:flex lg:flex-1 lg:items-center lg:justify-end lg:space-x-6">
+                  <Link
+                    to="/register"
+                    className="text-sm font-medium text-white hover:text-gray-100"
+                  >
+                    Create an account
+                  </Link>
+                  <span className="w-px h-6 bg-gray-600" aria-hidden="true" />
+                  <Link
+                    to="/login"
+                    className="text-sm font-medium text-white hover:text-gray-100"
+                  >
+                    Sign in
+                  </Link>
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Desktop Navigation */}
           <div className="bg-white">
@@ -235,19 +269,47 @@ export default function Navbar() {
 
                   {/* login profile icon mobile */}
                   <div className="flex items-center justify-end flex-1">
+                    {isAdmin && (
+                      <Link
+                        to="/admin"
+                        type="button"
+                        className="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-red-500 border border-transparent rounded-md shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                      >
+                        Admin Dashboard
+                      </Link>
+                    )} 
                     <div className="flex items-center lg:ml-8">
                       <div className="flex space-x-8">
                         {isLoggedIn && (
                           <div className="flex">
                             <Link
                               to="/customer-profile"
-                              className="p-2 -m-2 text-gray-400 hover:text-gray-500"
+                              className="p-2 m-2 text-gray-400 hover:text-gray-500"
                             >
                               <UserIcon
                                 className="w-6 h-6"
                                 aria-hidden="true"
                               />
                             </Link>
+                            <button onClick={logoutHandler}>
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                viewBox="0 0 20 20"
+                                fill="currentColor"
+                                className="text-gray-500 size-6"
+                              >
+                                <path
+                                  fillRule="evenodd"
+                                  d="M3 4.25A2.25 2.25 0 0 1 5.25 2h5.5A2.25 2.25 0 0 1 13 4.25v2a.75.75 0 0 1-1.5 0v-2a.75.75 0 0 0-.75-.75h-5.5a.75.75 0 0 0-.75.75v11.5c0 .414.336.75.75.75h5.5a.75.75 0 0 0 .75-.75v-2a.75.75 0 0 1 1.5 0v2A2.25 2.25 0 0 1 10.75 18h-5.5A2.25 2.25 0 0 1 3 15.75V4.25Z"
+                                  clipRule="evenodd"
+                                />
+                                <path
+                                  fillRule="evenodd"
+                                  d="M19 10a.75.75 0 0 0-.75-.75H8.704l1.048-.943a.75.75 0 1 0-1.004-1.114l-2.5 2.25a.75.75 0 0 0 0 1.114l2.5 2.25a.75.75 0 1 0 1.004-1.114l-1.048-.943h9.546A.75.75 0 0 0 19 10Z"
+                                  clipRule="evenodd"
+                                />
+                              </svg>
+                            </button>
                           </div>
                         )}
                       </div>
@@ -267,9 +329,7 @@ export default function Navbar() {
                             aria-hidden="true"
                           />
                           <span className="ml-2 text-sm font-medium text-gray-700 group-hover:text-gray-800">
-                            {cartItems?.length > 0
-                              ? cartItems.length
-                              : 0}
+                            {cartItems?.length > 0 ? cartItems.length : 0}
                           </span>
                         </Link>
                       </div>

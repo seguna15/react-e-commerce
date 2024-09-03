@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import highHeel from '../../../assets/high-heels-2184095_1280.webp'
 import {useDispatch, useSelector} from "react-redux";
 import { loginUserAction } from "../../../redux/slices/users/usersSlice";
@@ -25,21 +25,19 @@ const Login = () => {
   //---onsubmit handler----
   const onSubmitHandler = (e) => {
     e.preventDefault();
-    
     dispatch(loginUserAction({email, password}))
+    //window.location.href="/"
   };
 
   //get data from store
-  const {error, loading, userInfo} = useSelector((state) => state?.users?.userAuth);
+  const { loading, userInfo} = useSelector((state) => state?.users?.userAuth);
   
-  //redirect
-  if(userInfo?.userData?.isAdmin){
-    return window.location.href = "/admin"
-  }
+  useEffect(() => {
+    if (userInfo?.userFound) {
+      window.location.href = "/";
+    }
+  },[userInfo])
   
-  if(userInfo?.userData?.isAdmin === false) {
-    return window.location.href = "/customer";
-  }
 
 
   return (

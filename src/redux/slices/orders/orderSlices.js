@@ -11,6 +11,7 @@ const initialState = {
     error: null,
     isAdded: false,
     isUpdated: false,
+    stats: null
 }
 
 //create order action
@@ -30,6 +31,23 @@ export const placeOrderAction = createAsyncThunk(
     }
 );
 
+//update order action
+export const updateOrderAction = createAsyncThunk(
+    "/order/update-order",
+    async (payload, {rejectWithValue, getState, dispatch}) => {
+        try{
+            const {status, id,} = payload;
+            //make request
+
+            const {data} = await apiClient.patch(`/orders/update/${id}`, {status});
+            return data;
+        }catch (error) {
+            
+            return rejectWithValue(error?.response?.data)
+        } 
+    }
+);
+
 //fetch All orders
 export const fetchOrdersAction = createAsyncThunk(
     "/product/fetch-orders",
@@ -38,6 +56,23 @@ export const fetchOrdersAction = createAsyncThunk(
         try{
             
             const {data} = await apiClient.get("/orders");
+            return data;
+        }catch (error) {
+            
+            return rejectWithValue(error?.response?.data)
+        } 
+    }
+);
+
+//fetch orders statistics
+export const fetchOrdersStatisticsAction = createAsyncThunk(
+    "/product/fetch-orders-statistics",
+    async ( payload, {rejectWithValue, getState, dispatch}) => {
+        
+        try{
+            
+            const {data} = await apiClient.get("/orders/sales/stats");
+            
             return data;
         }catch (error) {
             
@@ -93,7 +128,7 @@ const orderSlice = createSlice({
       });
       builder.addCase(fetchOrdersAction.fulfilled, (state, action) => {
         state.loading = false;
-        state.orders = action.payload;
+        state.orders = action.payload.orders;
         
       });
       builder.addCase(fetchOrdersAction.rejected, (state, action) => {
@@ -105,7 +140,47 @@ const orderSlice = createSlice({
         });
       });
 
-      //fetch single orcer
+      //fetch stats
+      builder.addCase(fetchOrdersStatisticsAction.pending, (state) => {
+        state.loading = true;
+      });
+      builder.addCase(fetchOrdersStatisticsAction.fulfilled, (state, action) => {
+        state.loading = false;
+        state.stats = action.payload;
+  
+      });
+      builder.addCase(fetchOrdersStatisticsAction.rejected, (state, action) => {
+        state.loading = false;
+        state.stats = null;
+        state.error = action.payload;
+        toast.error(`${action.payload.message}`, {
+          position: "top-center",
+        });
+      });
+
+      //fetch stats
+      builder.addCase(updateOrderAction.pending, (state) => {
+        state.loading = true;
+      });
+      builder.addCase(updateOrderAction.fulfilled, (state, action) => {
+        state.loading = false;
+        state.order = action.payload;
+        state.isUpdated = true;
+        toast.success(`${action.payload.message}`, {
+          position: "top-center",
+        })
+      });
+      builder.addCase(updateOrderAction.rejected, (state, action) => {
+        state.loading = false;
+        state.order = null;
+        state.error = action.payload;
+        state.isUpdated = true;
+        toast.error(`${action.payload.message}`, {
+          position: "top-center",
+        });
+      });
+
+      //fetch single order
       builder.addCase(fetchSingleOrderAction.pending, (state) => {
         state.loading = true;
       });
@@ -128,7 +203,8 @@ const orderSlice = createSlice({
       });
 
       builder.addCase(resetSuccessAction.pending, (state, action) => {
-        state.isAdded = false
+        state.isAdded = false;
+        state.isUpdated = false
       })
 
       

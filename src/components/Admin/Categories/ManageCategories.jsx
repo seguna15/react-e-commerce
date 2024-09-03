@@ -2,10 +2,20 @@ import { Link } from "react-router-dom";
 
 import LoadingComponent from "../../../shared/components/LoadingComponent";
 import NoDataFound from "../../../shared/components/NoDataFound";
+import { useDispatch, useSelector } from "react-redux";
+import { useEffect } from "react";
+import { fetchCategoriesAction } from "../../../redux/slices/categories/categoriesSlices";
 
 export default function ManageCategories() {
-  const { categories, loading, error } = {};
+  //dispatch
+  const dispatch = useDispatch();
 
+  useEffect(()=>{
+    dispatch(fetchCategoriesAction());
+  },[dispatch])
+
+  const { categories, loading } = useSelector(state => state?.categories);
+  
   //delete category handler
   const deleteCategoryHandler = (id) => {};
   return (
@@ -31,13 +41,6 @@ export default function ManageCategories() {
       </div>
       {loading ? (
         <LoadingComponent />
-      ) : error ? (
-        toast.error(
-          error?.message || "Something went wrong, please try again",
-          {
-            position: "top-center",
-          }
-        )
       ) : categories?.length <= 0 ? (
         <NoDataFound />
       ) : (

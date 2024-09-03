@@ -1,14 +1,15 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import { fetchCategoryAction } from "../../redux/slices/categories/categoriesSlices";
+import { fetchCategoriesAction } from "../../redux/slices/categories/categoriesSlices";
 import LoadingComponent from "../../shared/components/LoadingComponent";
+import NoDataFound from "../../shared/components/NoDataFound";
 
 const AllCategories = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(fetchCategoryAction());
+    dispatch(fetchCategoriesAction());
   }, [dispatch]);
 
   //get data from store
@@ -30,7 +31,7 @@ const AllCategories = () => {
       </div>
       {loading ? (
         <LoadingComponent />
-      ) : (
+      ) : categories?.length <= 0 ? <NoDataFound/> : (
         <div className="flow-root mt-4">
           <div className="-my-2">
             <div className="box-content relative py-2 overflow-x-auto h-80 xl:overflow-visible">

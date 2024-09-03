@@ -1,9 +1,13 @@
 
 
+
 const useIsAdmin = () => {
+  
   const user = JSON.parse(localStorage.getItem("userInfo"));
- 
-  return user?.userData?.isAdmin ? true : false;
+  const isAdmin = user?.userFound?.isAdmin ? true : false
+  
+  //return 
+  return isAdmin
 };
 
 export default useIsAdmin;

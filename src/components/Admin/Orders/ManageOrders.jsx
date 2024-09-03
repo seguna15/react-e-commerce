@@ -12,7 +12,7 @@ export default function ManageOrders() {
       <div className="bg-gray-50">
         <main className="py-24">
           <div className="mx-auto max-w-7xl sm:px-2 lg:px-8">
-            <div className="mx-auto max-w-2xl px-4 lg:max-w-4xl lg:px-0">
+            <div className="max-w-2xl px-4 mx-auto lg:max-w-4xl lg:px-0">
               <h1 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">
                 Manage Orders
               </h1>
@@ -25,7 +25,7 @@ export default function ManageOrders() {
 
           <section aria-labelledby="recent-heading" className="mt-16">
             <div className="mx-auto max-w-7xl sm:px-2 lg:px-8">
-              <div className="mx-auto max-w-2xl space-y-8 sm:px-4 lg:max-w-4xl lg:px-0">
+              <div className="max-w-2xl mx-auto space-y-8 sm:px-4 lg:max-w-4xl lg:px-0">
                 {loading ? (
                   <h2>Loading...</h2>
                 ) : error ? (
@@ -34,9 +34,9 @@ export default function ManageOrders() {
                   allOrders?.map((order) => (
                     <div
                       key={order.number}
-                      className="border-t border-b border-gray-200 bg-white shadow-sm sm:rounded-lg sm:border">
-                      <div className="flex items-center border-b border-gray-200 p-4 sm:grid sm:grid-cols-4 sm:gap-x-6 sm:p-6">
-                        <dl className="grid flex-1 grid-cols-2 gap-x-6 text-sm sm:col-span-3 sm:grid-cols-3 lg:col-span-2">
+                      className="bg-white border-t border-b border-gray-200 shadow-sm sm:rounded-lg sm:border">
+                      <div className="flex items-center p-4 border-b border-gray-200 sm:grid sm:grid-cols-4 sm:gap-x-6 sm:p-6">
+                        <dl className="grid flex-1 grid-cols-2 text-sm gap-x-6 sm:col-span-3 sm:grid-cols-3 lg:col-span-2">
                           <div>
                             <dt className="font-medium text-gray-900">
                               Order number
@@ -69,9 +69,9 @@ export default function ManageOrders() {
                           as="div"
                           className="relative flex justify-end lg:hidden">
                           <div className="flex items-center">
-                            <Menu.Button className="-m-2 flex items-center p-2 text-gray-400 hover:text-gray-500">
+                            <Menu.Button className="flex items-center p-2 -m-2 text-gray-400 hover:text-gray-500">
                               <EllipsisVerticalIcon
-                                className="h-6 w-6"
+                                className="w-6 h-6"
                                 aria-hidden="true"
                               />
                             </Menu.Button>
@@ -94,14 +94,14 @@ export default function ManageOrders() {
                         {order?.orderItems?.map((product) => (
                           <li key={product?.id} className="p-4 sm:p-6">
                             <div className="flex items-center sm:items-start">
-                              <div className="h-20 w-20 flex-shrink-0 overflow-hidden rounded-lg bg-gray-200 sm:h-40 sm:w-40">
+                              <div className="flex-shrink-0 w-20 h-20 overflow-hidden bg-gray-200 rounded-lg sm:h-40 sm:w-40">
                                 <img
                                   src={product?.imageSrc}
                                   alt={product?.imageAlt}
-                                  className="h-full w-full object-cover object-center"
+                                  className="object-cover object-center w-full h-full"
                                 />
                               </div>
-                              <div className="ml-6 flex-1 text-sm">
+                              <div className="flex-1 ml-6 text-sm">
                                 <div className="font-medium text-gray-900 sm:flex sm:justify-between">
                                   <h5>{product?.name}</h5>
                                   <p className="mt-2 sm:mt-0">
@@ -117,7 +117,7 @@ export default function ManageOrders() {
                             <div className="mt-6 sm:flex sm:justify-between">
                               <div className="flex items-center">
                                 <CheckCircleIcon
-                                  className="h-5 w-5 text-yellow-500"
+                                  className="w-5 h-5 text-yellow-500"
                                   aria-hidden="true"
                                 />
                                 <p className="ml-2 text-sm font-medium text-gray-500">
@@ -128,7 +128,7 @@ export default function ManageOrders() {
 
                               <div className="flex items-center">
                                 <svg
-                                  className="h-5 w-5 text-red-500"
+                                  className="w-5 h-5 text-red-500"
                                   fill="none"
                                   stroke="currentColor"
                                   viewBox="0 0 24 24"

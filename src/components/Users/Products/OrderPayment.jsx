@@ -37,11 +37,11 @@ export default function OrderPayment() {
 
   const { loading, profile } = useSelector((state) => state?.users);
 
-  const user = profile?.userFound;
+  
   //place order 
   
   // get shipping address
-  const shippingAddress =  user?.shippingAddress
+  const shippingAddress =  profile?.shippingAddress
   const placeOrderHandler = () => {
     dispatch(placeOrderAction({shippingAddress, orderItems: cartItems, totalPrice: sumTotalPrice}));
     //empty cart Items

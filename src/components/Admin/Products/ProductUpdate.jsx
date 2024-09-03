@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useParams } from "react-router-dom";
 import Select from "react-select";
 import makeAnimated from "react-select/animated";
 
@@ -7,31 +8,24 @@ import LoadingComponent from "../../../shared/components/LoadingComponent";
 import { fetchCategoriesAction } from "../../../redux/slices/categories/categoriesSlices";
 import { fetchBrandsAction } from "../../../redux/slices/brands/brandsSlices";
 import { fetchColorsAction } from "../../../redux/slices/colors/colorsSlice";
-import { createProductAction } from "../../../redux/slices/products/productSlices";
-import { imagesValidator } from "../../../shared/validators";
-import ImageComponent from "../../../shared/components/ImageComponent";
+import {  updateProductAction } from "../../../redux/slices/products/productSlices";
+import useFetchProduct from "../../../shared/hooks/useFetchCoupon";
+
+
 
 //animated components for react-select
 const animatedComponents = makeAnimated();
 
-export default function AddProduct() {
+export default function ProductUpdate() {
+  //dispatch
   const dispatch = useDispatch();
 
-  //files 
-  const [files, setFiles] = useState([]);
-  const [fileErrs, setFileErrs] = useState([]);
+  //get id from params
+  const { id } = useParams();
 
-  //file handleChange
-  const fileHandleChange = (event) => {
-    const newFiles = Array.from(event);
-    console.log()
-    //validation
-    const errors = imagesValidator(newFiles);
-    console.log(errors)
-    setFileErrs(errors);
-    setFiles(newFiles)
-    
-  }
+  //fetch single product and formData
+  const { formData, setFormData } = useFetchProduct(id);
+
   //Sizes
   const sizes = ["S", "M", "L", "XL", "XXL"];
   const [sizeOptions, setSizeOptions] = useState([]);
@@ -53,29 +47,28 @@ export default function AddProduct() {
     dispatch(fetchCategoriesAction());
   }, [dispatch]);
   //select data from store
-  const { categories} = useSelector(
-    (state) => state?.categories
-  );
+  const { categories } = useSelector((state) => state?.categories);
 
   //brands
   useEffect(() => {
     dispatch(fetchBrandsAction());
   }, [dispatch]);
 
-  const {brands} = useSelector((state) => state?.brands)
-
-  // colors
-  const [colorOptions, setColorOptions] = useState([]);
+  const { brands } = useSelector((state) => state?.brands);
   
+  // colors
+  const [colorOptions, setColorOptions] = useState([formData?.colors]);
+ 
   useEffect(() => {
     dispatch(fetchColorsAction());
   }, [dispatch]);
 
   const { colors } = useSelector((state) => state?.colors);
-  
+
   const handleColorChangeOption = (colors) => {
     setColorOptions(colors);
   };
+
   const colorOptionsConverted = colors?.map((color) => {
     return {
       value: color?.name,
@@ -83,39 +76,29 @@ export default function AddProduct() {
     };
   });
 
-
-
-  //---form data---
-  const [formData, setFormData] = useState({
-    name: "",
-    description: "",
-    category: "",
-    sizes: "",
-    brand: "",
-    colors: "",
-    price: "",
-    totalQty: "",
-  });
-
   //onChange
   const handleOnChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    setFormData((prevState) => ({
+      ...prevState,
+      [e.target.name]: e.target.value,
+    }));
+
+    //setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  //get product from store
-  const {product, loading} = useSelector((state) => state?.products)
+  
 
   //onSubmit
   const handleOnSubmit = (e) => {
     e.preventDefault();
     dispatch(
-      createProductAction({
-        ...formData, 
-        files,
-        colors: colorOptions?.map(color => color?.label),
-        sizes: sizeOptions?.map(size => size?.label)
+      updateProductAction({
+        ...formData,
+        id,
+        colors: colorOptions?.map((color) => color?.label),
+        sizes: sizeOptions?.map((size) => size?.label),
       })
-    ) 
+    );
     //reset form data
     setFormData({
       name: "",
@@ -127,25 +110,28 @@ export default function AddProduct() {
       images: "",
       price: "",
       totalQty: "",
-    });   
+    });
   };
+
+  //get product from store
+  const {loading } = useSelector((state) => state?.products);
 
   return (
     <>
       <div className="flex flex-col justify-center min-h-full py-12 sm:px-6 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-md">
           <h2 className="mt-6 text-3xl font-bold tracking-tight text-center text-gray-900">
-            Create New Product
+            Update Product
           </h2>
-          <p className="mt-2 text-sm text-center text-gray-600">
+          <div className="mt-2 text-sm text-center text-gray-600">
             <p className="font-medium text-indigo-600 hover:text-indigo-500">
               Manage Products
             </p>
-          </p>
+          </div>
         </div>
 
         <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-          <div className="px-4 py-8 bg-white shadow sm:rounded-lg sm:px-10">
+          <div className="px-4 py-4 bg-white shadow sm:rounded-lg sm:px-10">
             <form className="space-y-6" onSubmit={handleOnSubmit}>
               <div>
                 <label className="block text-sm font-medium text-gray-700">
@@ -186,10 +172,10 @@ export default function AddProduct() {
                 </label>
                 <select
                   name="category"
-                  value={formData.category}
+                  value={formData?.category}
                   onChange={handleOnChange}
                   className="block w-full py-2 pl-3 pr-10 mt-1 text-base border border-gray-300 rounded-md focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
-                  defaultValue="Canada"
+                  
                 >
                   <option>-- Select Category --</option>
                   {categories?.map((category) => (
@@ -206,10 +192,10 @@ export default function AddProduct() {
                 </label>
                 <select
                   name="brand"
-                  value={formData.brand}
+                  value={formData?.brand}
                   onChange={handleOnChange}
                   className="block w-full py-2 pl-3 pr-10 mt-1 text-base border border-gray-300 rounded-md focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
-                  defaultValue="Canada"
+                  
                 >
                   <option>-- Select Brand --</option>
                   {brands?.map((brand) => (
@@ -240,16 +226,6 @@ export default function AddProduct() {
                 />
               </div>
 
-              {/* upload images */}
-              <ImageComponent
-                label="Upload images"
-                value={formData.images}
-                onFileChangeHandler={fileHandleChange}
-                multiple
-                imageErrors={fileErrs}
-              />
-
-              {/* price */}
               <div>
                 <label className="block text-sm font-medium text-gray-700">
                   Price
@@ -257,7 +233,7 @@ export default function AddProduct() {
                 <div className="mt-1">
                   <input
                     name="price"
-                    value={formData.price}
+                    value={formData?.price}
                     onChange={handleOnChange}
                     type="number"
                     className="block w-full px-3 py-2 placeholder-gray-400 border border-gray-300 rounded-md shadow-sm appearance-none focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
@@ -273,7 +249,7 @@ export default function AddProduct() {
                 <div className="mt-1">
                   <input
                     name="totalQty"
-                    value={formData.totalQty}
+                    value={formData?.totalQty}
                     onChange={handleOnChange}
                     type="number"
                     className="block w-full px-3 py-2 placeholder-gray-400 border border-gray-300 rounded-md shadow-sm appearance-none focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
@@ -292,7 +268,7 @@ export default function AddProduct() {
                   <textarea
                     rows={4}
                     name="description"
-                    value={formData.description}
+                    value={formData?.description}
                     onChange={handleOnChange}
                     className="block w-full border border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                   />
@@ -303,11 +279,10 @@ export default function AddProduct() {
                   <LoadingComponent />
                 ) : (
                   <button
-                    disabled={fileErrs?.length > 0}
                     type="submit"
                     className="flex justify-center w-full px-4 py-2 text-sm font-medium text-white bg-indigo-600 border border-transparent rounded-md shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:bg-indigo-400"
                   >
-                    Add Product
+                    Update Product
                   </button>
                 )}
               </div>

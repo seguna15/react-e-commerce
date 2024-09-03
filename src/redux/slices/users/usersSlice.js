@@ -9,7 +9,8 @@ const initialState = {
     loading: false,
     error: null,
     users: [],
-    user: {},
+    customers: [],
+    user: null,
     profile: {},
     userAuth: {
         loading: false,
@@ -48,6 +49,21 @@ export const registerUserAction = createAsyncThunk('users/register', async({full
     }
 })
 
+//logout user action
+export const logoutAction = createAsyncThunk('users/logout', async(payload, {rejectWithValue, getState, dispatch}) => {
+    try {
+        const { data } = await apiClient.post("auth/logout", {},{
+          withCredentials: true,
+        });
+
+        localStorage.removeItem("userInfo");
+        
+        return data;
+    } catch (error) {
+        return rejectWithValue(error?.response?.data)
+    }
+})
+
 //update user shipping address action
 export const updateUserShippingAddressAction = createAsyncThunk('users/update-shipping-address', async({firstName, lastName, address, city, postalCode, province, phoneNumber, country}, {rejectWithValue}) => {
     try {
@@ -79,6 +95,17 @@ export const getUserProfileAction = createAsyncThunk('users/profile-fetched', as
     }
 })
 
+//get all customers action
+export const getAllCustomersAction = createAsyncThunk('users/customers-fetched', async(payload, {rejectWithValue}) => {
+    try {
+        const { data } = await apiClient.get("users/customers");
+        
+        return data;
+    } catch (error) {
+        return rejectWithValue(error?.response?.data)
+    }
+})
+
 //users slice 
 const usersSlice = createSlice({
     name: "users",
@@ -90,13 +117,30 @@ const usersSlice = createSlice({
             state.userAuth.loading = true
         });
         builder.addCase(loginUserAction.fulfilled, (state, action) => {
-            state.userAuth.userInfo = {token: action.payload.token, userData: action.payload.userData};
+            state.userAuth.userInfo = action.payload
             state.userAuth.loading= false;
             toast.success(action.payload.message, {
                 position: "top-center"
             })
         });
         builder.addCase(loginUserAction.rejected, (state, action) => {
+            state.userAuth.error = action.payload;
+            state.userAuth.loading = false;
+            toast.error(action.payload.message, {
+              position: "top-center",
+            });
+        })
+
+        //login
+        builder.addCase(logoutAction.pending, (state, action) => {
+            state.userAuth.loading = true
+        });
+        builder.addCase(logoutAction.fulfilled, (state, action) => {
+            state.userAuth.userInfo = null;
+            state.userAuth.loading= false;
+            
+        });
+        builder.addCase(logoutAction.rejected, (state, action) => {
             state.userAuth.error = action.payload;
             state.userAuth.loading = false;
             toast.error(action.payload.message, {
@@ -141,12 +185,29 @@ const usersSlice = createSlice({
               position: "top-center",
             });
         })
+        //get all customers
+        builder.addCase(getAllCustomersAction.pending, (state) => {
+            state.loading = true
+        });
+        builder.addCase(getAllCustomersAction.fulfilled, (state, action) => {
+            state.customers = action.payload.customers
+            state.loading= false;
+           
+        });
+        builder.addCase(getAllCustomersAction.rejected, (state, action) => {
+            state.error = action.payload;
+            state.loading = false;
+            toast.error(action.payload.message, {
+              position: "top-center",
+            });
+        })
+
         //get user profile
         builder.addCase(getUserProfileAction.pending, (state) => {
             state.loading = true
         });
         builder.addCase(getUserProfileAction.fulfilled, (state, action) => {
-            state.profile = action.payload
+            state.profile = action.payload.userFound
             state.loading= false;
            
         });

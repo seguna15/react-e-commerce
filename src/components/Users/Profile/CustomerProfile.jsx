@@ -1,41 +1,48 @@
 import CustomerDetails from "./CustomerDetails";
 import ShippingAddressDetails from "./ShippingAddressDetails";
-
+import { getUserProfileAction } from "../../../redux/slices/users/usersSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { useEffect } from "react";
+import LoadingComponent from "../../../shared/components/LoadingComponent";
+import useProfile from "../../../shared/hooks/useProfile";
 export default function CustomerProfile() {
-  let profile;
-  let loading;
-  let error;
-  let orders = [];
+ 
+  //dispatch
+  const dispatch = useDispatch();
 
+  const { loading, profile} = useProfile(dispatch);
+  
+  //get orders
+  const orders = profile?.orders;
+  
   return (
     <>
-      <div className="flex flex-wrap -mx-3 -mb-3 md:mb-0">
-        <div className="w-full md:w-1/3 px-3 mb-3 md:mb-0" />
-        <div className="w-full md:w-1/2 px-3 mb-3 md:mb-0">
+      <div className="flex flex-wrap mt-2 -mx-3 -mb-3 md:mb-0">
+        <div className="w-full px-3 mb-3 md:w-1/3 md:mb-0" />
+        <div className="w-full px-3 mb-3 md:w-1/2 md:mb-0">
           <CustomerDetails
-            email={profile?.user?.email}
-            dateJoined={new Date(profile?.user?.createdAt).toDateString()}
-            fullName={profile?.user?.fullname}
+            email={profile?.email}
+            dateJoined={new Date(profile?.createdAt).toDateString()}
+            fullName={profile?.fullname}
           />
         </div>
-        <div className="w-full md:w-1/3 px-3 mb-3 md:mb-0" />
+        <div className="w-full px-3 mb-3 md:w-1/3 md:mb-0" />
       </div>
 
       {loading ? (
-        <h2>Loading...</h2>
-      ) : error ? (
-        <h2>{error}</h2>
-      ) : orders?.length <= 0 ? (
-        <h2 className="text-center mt-10">No Order Found</h2>
+        <LoadingComponent/>
+      ) 
+       : orders?.length <= 0 ? (
+        <h2 className="mt-10 text-center">No Order Found</h2>
       ) : (
         orders?.map((order) => {
           return (
             <>
               <div className="bg-gray-50">
-                <div className="mx-auto max-w-2xl pt-4 sm:py-24 sm:px-6 lg:max-w-7xl lg:px-8">
-                  <div className="space-y-2 px-4 sm:flex sm:items-baseline sm:justify-between sm:space-y-0 sm:px-0">
+                <div className="max-w-2xl pt-4 mx-auto sm:py-24 sm:px-6 lg:max-w-7xl lg:px-8">
+                  <div className="px-4 space-y-2 sm:flex sm:items-baseline sm:justify-between sm:space-y-0 sm:px-0">
                     <div className="flex sm:items-baseline sm:space-x-4">
-                      <dl className="grid flex-1 grid-cols-2 gap-x-6 text-sm sm:col-span-3 sm:grid-cols-3 lg:col-span-2">
+                      <dl className="grid flex-1 grid-cols-2 text-sm gap-x-6 sm:col-span-3 sm:grid-cols-3 lg:col-span-2">
                         <div>
                           <dt className="font-medium text-gray-900">
                             Order number
@@ -92,14 +99,14 @@ export default function CustomerProfile() {
                       {order?.orderItems?.map((product) => (
                         <div
                           key={product.id}
-                          className="border-t border-b border-gray-200 bg-white shadow-sm sm:rounded-lg sm:border">
-                          <div className="py-6 px-4 sm:px-6 lg:grid lg:grid-cols-12 lg:gap-x-8 lg:p-8">
+                          className="bg-white border-t border-b border-gray-200 shadow-sm sm:rounded-lg sm:border">
+                          <div className="px-4 py-6 sm:px-6 lg:grid lg:grid-cols-12 lg:gap-x-8 lg:p-8">
                             <div className="sm:flex lg:col-span-7">
-                              <div className="aspect-w-1 aspect-h-1 w-full flex-shrink-0 overflow-hidden rounded-lg sm:aspect-none sm:h-40 sm:w-40">
+                              <div className="flex-shrink-0 w-full overflow-hidden rounded-lg aspect-w-1 aspect-h-1 sm:aspect-none sm:h-40 sm:w-40">
                                 <img
-                                  src={product.imageSrc}
-                                  alt={product.imageAlt}
-                                  className="h-full w-full object-cover object-center sm:h-full sm:w-full"
+                                  src={product.image}
+                                  alt={product.image}
+                                  className="object-cover object-center w-full h-full sm:h-full sm:w-full"
                                 />
                               </div>
 
@@ -120,7 +127,7 @@ export default function CustomerProfile() {
 
                           <div className="flex items-center mb-3">
                             <svg
-                              className="h-5 w-5 text-red-500"
+                              className="w-5 h-5 text-red-500"
                               fill="none"
                               stroke="currentColor"
                               viewBox="0 0 24 24"
@@ -143,7 +150,7 @@ export default function CustomerProfile() {
               </div>
               {/* shipping address */}
               <ShippingAddressDetails
-                shippingAddress={profile?.user?.shippingAddress}
+                shippingAddress={profile?.shippingAddress}
               />
             </>
           );

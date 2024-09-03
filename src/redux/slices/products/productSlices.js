@@ -53,6 +53,32 @@ export const createProductAction = createAsyncThunk(
     }
 );
 
+//update product action
+export const updateProductAction = createAsyncThunk(
+    "/product/update",
+    async (payload, {rejectWithValue, getState, dispatch}) => {
+        
+        try{
+            
+            const {name, description, category, sizes, brand, colors, price, totalQty, id} = payload;
+            //make request
+            const { data } = await apiClient.put(`/products/update/${id}`, {
+              name,
+              description,
+              category,
+              sizes,
+              brand,
+              colors,
+              price,
+              totalQty,
+            });
+            return data;
+        }catch (error) {
+            return rejectWithValue(error?.response?.data)
+        } 
+    }
+);
+
 //fetch All Products
 export const fetchProductsAction = createAsyncThunk(
     "/product/fetchAll",
@@ -63,7 +89,6 @@ export const fetchProductsAction = createAsyncThunk(
             const {data} = await apiClient.get(url);
             return data;
         }catch (error) {
-            
             return rejectWithValue(error?.response?.data)
         } 
     }
@@ -79,7 +104,7 @@ export const fetchSingleProductAction = createAsyncThunk(
             const {data} = await apiClient.get(`/products/${productId}`);
             return data;
         }catch (error) {
-            
+            console.log(error)
             return rejectWithValue(error?.response?.data)
         } 
     }
@@ -111,6 +136,28 @@ const productSlice = createSlice({
           position: "top-center",
         });
       });
+      
+      //update product
+      builder.addCase(updateProductAction.pending, (state) => {
+        state.loading = true;
+      });
+      builder.addCase(updateProductAction.fulfilled, (state, action) => {
+        state.loading = false;
+        state.product = action.payload;
+        state.isUpdated = true;
+        toast.success(`${action.payload.message}`, {
+          position: "top-center",
+        });
+      });
+      builder.addCase(updateProductAction.rejected, (state, action) => {
+        state.loading = false;
+        state.product = null;
+        state.isUpdated = false;
+        state.error = action.payload;
+        toast.error(`${action.payload.message}`, {
+          position: "top-center",
+        });
+      });
 
       //fetch all product
       builder.addCase(fetchProductsAction.pending, (state) => {
@@ -137,7 +184,6 @@ const productSlice = createSlice({
       builder.addCase(fetchSingleProductAction.fulfilled, (state, action) => {
         state.loading = false;
         state.product = action.payload.product;
-        
       });
       builder.addCase(fetchSingleProductAction.rejected, (state, action) => {
         state.loading = false;
@@ -149,7 +195,7 @@ const productSlice = createSlice({
       });
 
       builder.addCase(resetSuccessAction.pending, (state, action) => {
-        state.isAdded = false
+        state.isAdded = false;
       })
 
       builder.addCase(resetErrAction.pending, (state, action) => {

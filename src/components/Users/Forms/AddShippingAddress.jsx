@@ -13,7 +13,8 @@ const AddShippingAddress = () => {
 
   const { loading, profile } = useSelector((state) => state?.users);
 
-  const user = profile?.userFound;
+ 
+
   
   const [formData, setFormData] = useState({
     firstName: "",
@@ -39,7 +40,7 @@ const AddShippingAddress = () => {
   return (
     <>
       {/* shipping details */}
-      {user?.hasShippingAddress ? (
+      {profile?.hasShippingAddress ? (
         <div className="mt-6">
           <h3 className="text-lg font-medium text-gray-900">
             Shipping details
@@ -50,22 +51,22 @@ const AddShippingAddress = () => {
           </p>
           <div>
             <p className="mt-1 text-sm text-gray-500">
-              First Name : {user?.shippingAddress?.firstName}
+              First Name : {profile?.shippingAddress?.firstName}
             </p>
             <p className="mt-1 text-sm text-gray-500">
-              Last Name : {user?.shippingAddress?.lastName}
+              Last Name : {profile?.shippingAddress?.lastName}
             </p>
             <p className="mt-1 text-sm text-gray-500">
-              Address : {user?.shippingAddress?.address}
+              Address : {profile?.shippingAddress?.address}
             </p>
             <p className="mt-1 text-sm text-gray-500">
-              City : {user?.shippingAddress?.city}
+              City : {profile?.shippingAddress?.city}
             </p>
             <p className="mt-1 text-sm text-gray-500">
-              Country : {user?.shippingAddress?.country}
+              Country : {profile?.shippingAddress?.country}
             </p>
             <p className="mt-1 text-sm text-gray-500">
-              phone : {user?.shippingAddress?.phoneNumber}
+              phone : {profile?.shippingAddress?.phoneNumber}
             </p>
           </div>
         </div>

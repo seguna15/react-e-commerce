@@ -1,23 +1,28 @@
 import { useEffect, useState } from "react";
 import DatePicker from "react-datepicker";
-
 import "react-datepicker/dist/react-datepicker.css";
 import { useParams } from "react-router-dom";
 import LoadingComponent from "../../../shared/components/LoadingComponent";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchCouponAction, updateCouponAction } from "../../../redux/slices/coupons/couponsSlice";
+import useFetchCoupon from "../../../shared/hooks/useFetchCoupon";
 
 export default function UpdateCoupon() {
-  //---Fetch coupon ---
-  const { coupon, loading, error, isUpdated } = {};
+  //dispatch
+  const dispatch = useDispatch();
+
   //get the coupon
   const { code } = useParams();
+
+  const {formData, setFormData} = useFetchCoupon(code)
+  
+  //---Fetch coupon ---
+  const {loading } = useSelector(state => state?.coupons);
+
   const [startDate, setStartDate] = useState(new Date());
   const [endDate, setEndDate] = useState(new Date());
 
-  //---handle form data---
-  const [formData, setFormData] = useState({
-    code: coupon?.coupon?.code,
-    discount: coupon?.coupon?.discount,
-  });
+  
 
   //onHandleChange---
   const onHandleChange = (e) => {
@@ -26,16 +31,18 @@ export default function UpdateCoupon() {
   //onHandleSubmit---
   const onHandleSubmit = (e) => {
     e.preventDefault();
-
+    dispatch(updateCouponAction({
+      id: formData?.id, code: formData?.code, discount: formData?.discount, startDate, endDate
+    }))
     //reset
     setFormData({
+      id: "",
       code: "",
       discount: "",
     });
   };
   return (
     <>
-     
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <h2 className="mt-6 text-3xl font-extrabold text-center text-gray-900">
           Update Coupon
@@ -43,11 +50,7 @@ export default function UpdateCoupon() {
       </div>
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
         <div className="px-4 py-8 bg-white shadow sm:rounded-lg sm:px-10">
-          {error ? (
-              toast.error(error?.message || "Something went wrong, please try again",{
-              position: "top-center"
-            })
-          ) : (
+          
             <form className="space-y-6" onSubmit={onHandleSubmit}>
               <div>
                 <label className="block text-sm font-medium text-gray-700">
@@ -110,13 +113,14 @@ export default function UpdateCoupon() {
                 ) : (
                   <button
                     type="submit"
-                    className="flex justify-center w-full px-4 py-2 text-sm font-medium text-white bg-indigo-600 border border-transparent rounded-md shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                    className="flex justify-center w-full px-4 py-2 text-sm font-medium text-white bg-indigo-600 border border-transparent rounded-md shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                  >
                     Update Coupon
                   </button>
                 )}
               </div>
             </form>
-          )}
+          
         </div>
       </div>
     </>
