@@ -11,7 +11,7 @@ import { Link } from "react-router-dom";
 import logo from "../../assets/logo3.png";
 import useLogin from "../../shared/hooks/useLogin";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchCategoriesAction } from "../../redux/slices/categories/categoriesSlices";
+import { fetchAccessoriesAction } from "../../redux/slices/accessories/accessoriesSlices";
 import { getCartItemsFromLocalStorageAction } from "../../redux/slices/cart/cartSlices";
 import { logoutAction } from "../../redux/slices/users/usersSlice";
 import {  fetchCurrentCouponAction } from "../../redux/slices/coupons/couponsSlice";
@@ -22,14 +22,14 @@ export default function Navbar() {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(fetchCategoriesAction());
+    dispatch(fetchAccessoriesAction());
   }, [dispatch]);
 
   //get data from store
 
-  const { categories } = useSelector((state) => state?.categories);
+  const { accessories } = useSelector((state) => state?.accessories);
 
-  const categoriesToDisplay = categories.slice(0, 4);
+  const accessoriesToDisplay = accessories.slice(0, 4);
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -50,8 +50,9 @@ export default function Navbar() {
   
  
   //logoutHandler
-  const logoutHandler = () => {
-    dispatch(logoutAction());
+  const logoutHandler = async (event) => {    
+    event.preventDefault();
+    await dispatch(logoutAction());
     window.location.reload();
   };
 
@@ -121,8 +122,8 @@ export default function Navbar() {
                       </a>
                     </div>
                   ))} */}
-                  {categoriesToDisplay?.length > 0 &&
-                    categoriesToDisplay?.map((category) => {
+                  {accessoriesToDisplay?.length > 0 &&
+                    accessoriesToDisplay?.map((category) => {
                       return (
                         <>
                           <Link
@@ -229,8 +230,8 @@ export default function Navbar() {
                     {/*  menus links*/}
                     <Popover.Group className="ml-8">
                       <div className="flex justify-center h-full space-x-8">
-                        {categoriesToDisplay?.length > 0 &&
-                          categoriesToDisplay?.map((category) => {
+                        {accessoriesToDisplay?.length > 0 &&
+                          accessoriesToDisplay?.map((category) => {
                             return (
                               <>
                                 <Link
@@ -291,7 +292,7 @@ export default function Navbar() {
                                 aria-hidden="true"
                               />
                             </Link>
-                            <button onClick={logoutHandler}>
+                            <button type="button" onClick={logoutHandler}>
                               <svg
                                 xmlns="http://www.w3.org/2000/svg"
                                 viewBox="0 0 20 20"

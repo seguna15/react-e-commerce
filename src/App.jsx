@@ -12,32 +12,35 @@ import HomePage from "./components/HomePage/HomePage";
 import Navbar from "./components/Navbar/Navbar";
 import OrderHistory from "./components/Admin/Orders/ManageOrders";
 import OrderPayment from "./components/Users/Products/OrderPayment";
-import ManageCategories from "./components/Admin/Categories/ManageCategories";
+import ManageAccessories from "./components/Admin/Accessories/ManageAccessories";
 import ProductUpdate from "./components/Admin/Products/ProductUpdate";
 import ManageStocks from "./components/Admin/Products/ManageStocks";
-import CategoryToAdd from "./components/Admin/Categories/CategoryToAdd";
-import AddCategory from "./components/Admin/Categories/AddCategory";
-import AddBrand from "./components/Admin/Categories/AddBrand";
-import AddColor from "./components/Admin/Categories/AddColor";
-import AllCategories from "./components/HomePage/AllCategories";
+import AccessoryToAdd from "./components/Admin/Accessories/AccessoryToAdd";
+import AddAccessory from "./components/Admin/Accessories/AddAccessory";
+import AddBrand from "./components/Admin/Accessories/AddBrand";
+import AddColor from "./components/Admin/Accessories/AddColor";
+import AllAccessories from "./components/HomePage/AllAccessories";
 import UpdateCoupon from "./components/Admin/Coupons/UpdateCoupon";
 import Product from "./components/Users/Products/Product";
 import ShoppingCart from "./components/Users/Products/ShoppingCart";
 import ProductsFilters from "./components/Users/Products/ProductsFilters";
 import CustomerProfile from "./components/Users/Profile/CustomerProfile";
 import AddReview from "./components/Users/Reviews/AddReview";
-import UpdateCategory from "./components/Admin/Categories/UpdateCategory";
+import UpdateAccessory from "./components/Admin/Accessories/UpdateAccessory";
 import OrdersList from "./components/Admin/Orders/OrdersList";
 import ManageOrders from "./components/Admin/Orders/ManageOrders";
 import Customers from "./components/Admin/Customers/Customers";
 import AuthRoute from "./components/AuthRoute/AuthRoute";
 import AdminRoutes from "./components/AuthRoute/AdminRoutes";
-import ThanksForOrdering from "./components/Users/Products/ThanksForOrdering";
 import UpdateOrders from "./components/Admin/Orders/UpdateOrders";
-import BrandsList from "./components/Admin/Categories/BrandsList";
-import ColorList from "./components/Admin/Categories/ColorList";
+import BrandsList from "./components/Admin/Accessories/BrandsList";
+import ColorList from "./components/Admin/Accessories/ColorList";
 import useProfile from "./shared/hooks/useIsAdmin";
 import useIsAdmin from "./shared/hooks/useIsAdmin";
+import StripeSuccess from "./components/Users/Products/StripeSuccess";
+import PayPalSuccess from "./components/Users/Products/PayPalSuccess";
+import OrderDetails from "./components/Admin/Orders/OrderDetails";
+import AddCategory from "./components/Admin/Accessories/AddCategory";
 
 export const AuthContext = createContext(null);
 
@@ -108,29 +111,29 @@ const App = () => {
                   path="manage-coupon/edit/:code"
                   element={<UpdateCoupon />}
                 />
-                {/* category */}
-                {/* <Route path="category-to-add" element={<CategoryToAdd />} />{" "} */}
+                {/* accessory */}
+                {/* <Route path="accessory-to-add" element={<AccessoryToAdd />} />{" "} */}
                 <Route
-                  path="add-category"
+                  path="add-accessory"
                   element={
                     <AdminRoutes>
-                      <AddCategory />
+                      <AddAccessory />
                     </AdminRoutes>
                   }
                 />
                 <Route
-                  path="manage-category"
+                  path="manage-accessory"
                   element={
                     <AdminRoutes>
-                      <ManageCategories />
+                      <ManageAccessories />
                     </AdminRoutes>
                   }
                 />
                 <Route
-                  path="edit-category/:id"
+                  path="edit-accessory/:id"
                   element={
                     <AdminRoutes>
-                      <UpdateCategory />
+                      <UpdateAccessory />
                     </AdminRoutes>
                   }
                 />
@@ -139,6 +142,14 @@ const App = () => {
                   element={
                     <AdminRoutes>
                       <AddBrand />
+                    </AdminRoutes>
+                  }
+                />
+                <Route
+                  path="add-category"
+                  element={
+                    <AdminRoutes>
+                      <AddCategory />
                     </AdminRoutes>
                   }
                 />
@@ -161,6 +172,14 @@ const App = () => {
                     </AdminRoutes>
                   }
                 />
+                <Route
+                  path="orders-details/:id"
+                  element={
+                    <AdminRoutes>
+                      <OrderDetails />
+                    </AdminRoutes>
+                  }
+                />
 
                 <Route
                   path="customers"
@@ -177,8 +196,9 @@ const App = () => {
               <Route path="/" element={<HomePage />} />
               <Route path="/products-filters" element={<ProductsFilters />} />
               <Route path="/products/:id" element={<Product />} />
-              <Route path="/all-categories" element={<AllCategories />} />
-              <Route path="success" element={<ThanksForOrdering />} />
+              <Route path="/all-accessories" element={<AllAccessories />} />
+              <Route path="stripe-success" element={<StripeSuccess />} />
+              <Route path="paypal-success" element={<PayPalSuccess />} />
               {/* review */}
               <Route
                 path="/add-review/:id"

@@ -14,15 +14,31 @@ const initialState = {
     stats: null
 }
 
-//create order action
-export const placeOrderAction = createAsyncThunk(
-    "/order/place-order",
+//create order stripe action
+export const placeStripeOrderAction = createAsyncThunk(
+    "/order/place-stripe-order",
     async (payload, {rejectWithValue, getState, dispatch}) => {
         try{
-            const {orderItems, shippingAddress, totalPrice} = payload;
+            const {orderItems, shippingAddress, totalPrice, coupon} = payload;
             //make request
 
-            const {data} = await apiClient.post("/orders", payload);
+            const {data} = await apiClient.post("/orders/stripe", payload);
+            return window.open(data?.url);
+        }catch (error) {
+            
+            return rejectWithValue(error?.response?.data)
+        } 
+    }
+);
+//create order action
+export const placePaypalOrderAction = createAsyncThunk(
+    "/order/place-paypal-order",
+    async (payload, {rejectWithValue, getState, dispatch}) => {
+        try{
+            const {orderItems, shippingAddress, totalPrice, coupon} = payload;
+            //make request
+
+            const {data} = await apiClient.post("/orders/paypal", payload);
             return window.open(data?.url);
         }catch (error) {
             
@@ -102,17 +118,37 @@ const orderSlice = createSlice({
     name: "orders",
     initialState,
     extraReducers: (builder) => {
-      //create order
-      builder.addCase(placeOrderAction.pending, (state) => {
+      //create stripe order
+      builder.addCase(placeStripeOrderAction.pending, (state) => {
         state.loading = true;
       });
-      builder.addCase(placeOrderAction.fulfilled, (state, action) => {
+      builder.addCase(placeStripeOrderAction.fulfilled, (state, action) => {
         state.loading = false;
         state.order = action.payload;
         state.isAdded = true;
         
       });
-      builder.addCase(placeOrderAction.rejected, (state, action) => {
+      builder.addCase(placeStripeOrderAction.rejected, (state, action) => {
+        state.loading = false;
+        state.order = null;
+        state.isAdded = false;
+        state.error = action.payload;
+        toast.error(`${action.payload.message}`, {
+          position: "top-center",
+        });
+      });
+
+      //create stripe order
+      builder.addCase(placePaypalOrderAction.pending, (state) => {
+        state.loading = true;
+      });
+      builder.addCase(placePaypalOrderAction.fulfilled, (state, action) => {
+        state.loading = false;
+        state.order = action.payload;
+        state.isAdded = true;
+        
+      });
+      builder.addCase(placePaypalOrderAction.rejected, (state, action) => {
         state.loading = false;
         state.order = null;
         state.isAdded = false;
@@ -164,7 +200,7 @@ const orderSlice = createSlice({
       });
       builder.addCase(updateOrderAction.fulfilled, (state, action) => {
         state.loading = false;
-        state.order = action.payload;
+        state.order = action.payload.updatedOrder;
         state.isUpdated = true;
         toast.success(`${action.payload.message}`, {
           position: "top-center",
@@ -186,7 +222,7 @@ const orderSlice = createSlice({
       });
       builder.addCase(fetchSingleOrderAction.fulfilled, (state, action) => {
         state.loading = false;
-        state.order = action.payload;
+        state.order = action.payload.order;
         
       });
       builder.addCase(fetchSingleOrderAction.rejected, (state, action) => {

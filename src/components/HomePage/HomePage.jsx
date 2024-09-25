@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import HomeCategories from "./HomeCategories";
+import HomeAccessories from "./HomeAccessories";
 import HomeProductTrending from "./HomeProductTrending";
 
 const offers = [
@@ -65,7 +65,7 @@ export default function Example() {
                   <li key={offer.name} className="flex flex-col">
                     <a
                       href={offer.href}
-                      className="relative flex flex-1 flex-col justify-center bg-white py-6 px-4 text-center focus:z-10">
+                      className="relative flex flex-col justify-center flex-1 px-4 py-6 text-center bg-white focus:z-10">
                       <p className="text-sm text-gray-500">{offer.name}</p>
                       <p className="font-semibold text-gray-900">
                         {offer.description}
@@ -80,11 +80,11 @@ export default function Example() {
           <div className="relative">
             <div
               aria-hidden="true"
-              className="absolute hidden h-full w-1/2 bg-gray-100 lg:block"
+              className="absolute hidden w-1/2 h-full bg-gray-100 lg:block"
             />
             <div className="relative bg-gray-100 lg:bg-transparent">
-              <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:grid lg:grid-cols-2 lg:px-8">
-                <div className="mx-auto max-w-2xl py-24 lg:max-w-none lg:py-64">
+              <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:grid lg:grid-cols-2 lg:px-8">
+                <div className="max-w-2xl py-24 mx-auto lg:max-w-none lg:py-64">
                   <div className="lg:pr-16">
                     <h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl xl:text-6xl">
                       Shop with confidence
@@ -95,7 +95,7 @@ export default function Example() {
                     <div className="mt-6">
                       <a
                         href="#"
-                        className="inline-block rounded-md border border-transparent bg-indigo-600 py-3 px-8 font-medium text-white hover:bg-indigo-700">
+                        className="inline-block px-8 py-3 font-medium text-white bg-indigo-600 border border-transparent rounded-md hover:bg-indigo-700">
                         Shop Productivity
                       </a>
                     </div>
@@ -103,11 +103,11 @@ export default function Example() {
                 </div>
               </div>
             </div>
-            <div className="h-48 w-full sm:h-64 lg:absolute lg:top-0 lg:right-0 lg:h-full lg:w-1/2">
+            <div className="w-full h-48 sm:h-64 lg:absolute lg:top-0 lg:right-0 lg:h-full lg:w-1/2">
               <img
                 src="https://tailwindui.com/img/ecommerce-images/home-page-02-hero-half-width.jpg"
                 alt=""
-                className="h-full w-full object-cover object-center"
+                className="object-cover object-center w-full h-full"
               />
             </div>
           </div>
@@ -117,20 +117,20 @@ export default function Example() {
           {/* Sale */}
           <section
             aria-labelledby="sale-heading"
-            className="relative mx-auto flex max-w-7xl flex-col items-center px-4 pt-32 text-center sm:px-6 lg:px-8">
-            <div className="mx-auto max-w-2xl lg:max-w-none">
+            className="relative flex flex-col items-center px-4 pt-32 mx-auto text-center max-w-7xl sm:px-6 lg:px-8">
+            <div className="max-w-2xl mx-auto lg:max-w-none">
               <h2
                 id="sale-heading"
                 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl lg:text-6xl">
                 Get 25% off during our one-time sale
               </h2>
-              <p className="mx-auto mt-4 max-w-xl text-xl text-gray-600">
+              <p className="max-w-xl mx-auto mt-4 text-xl text-gray-600">
                 Most of our products are limited releases that won't come back.
                 Get your favorite items while they're in stock.
               </p>
               <a
                 href="#"
-                className="mt-6 inline-block w-full rounded-md border border-transparent bg-gray-900 py-3 px-8 font-medium text-white hover:bg-gray-800 sm:w-auto">
+                className="inline-block w-full px-8 py-3 mt-6 font-medium text-white bg-gray-900 border border-transparent rounded-md hover:bg-gray-800 sm:w-auto">
                 Get access to our one-time sale
               </a>
             </div>
@@ -156,7 +156,7 @@ export default function Example() {
             </Link>
           </div>
           {/* home categories */}
-          <HomeCategories />
+          <HomeAccessories />
         </section>
         {/* Home trending trending */}
         <HomeProductTrending />
@@ -169,7 +169,7 @@ export default function Example() {
             Our perks
           </h2>
 
-          <div className="mx-auto max-w-7xl py-24 px-4 sm:px-6 sm:py-32 lg:px-8">
+          <div className="px-4 py-24 mx-auto max-w-7xl sm:px-6 sm:py-32 lg:px-8">
             <div className="grid grid-cols-1 gap-y-12 sm:grid-cols-2 sm:gap-x-6 lg:grid-cols-4 lg:gap-x-8 lg:gap-y-0">
               {perks.map((perk) => (
                 <div
@@ -178,7 +178,7 @@ export default function Example() {
                   <div className="md:flex-shrink-0">
                     <div className="flow-root">
                       <img
-                        className="-my-1 mx-auto h-24 w-auto"
+                        className="w-auto h-24 mx-auto -my-1"
                         src={perk.imageUrl}
                         alt=""
                       />

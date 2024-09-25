@@ -36,6 +36,7 @@ export default function AddCoupon() {
       code: "",
       discount: "",
     });
+    window.location.reload()
   };
   
   //---coupon from store---

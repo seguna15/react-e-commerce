@@ -20,7 +20,17 @@ export const createProductAction = createAsyncThunk(
     async (payload, {rejectWithValue, getState, dispatch}) => {
         console.log(payload)
         try{
-            const {name, description, category, sizes, brand, colors, price, files, totalQty} = payload;
+            const {
+              name,
+              description,
+              category,
+              accessory,
+
+              brand,
+              price,
+              files,
+              sizeColourQty,
+            } = payload;
             //make request
 
             //FormData
@@ -28,23 +38,26 @@ export const createProductAction = createAsyncThunk(
             formData.append('name', name)
             formData.append('description', description)
             formData.append('category', category)
+            formData.append('accessory', accessory)
+            
            
             formData.append('brand', brand)
             
             formData.append('price', price)
-            formData.append('totalQty', totalQty)
+            
             formData.append('files', files)
 
-            sizes.forEach(size => {
-                formData.append("sizes", size)
-            })
-            colors.forEach(color => {
-                formData.append("colors", color)
-            })
+           /*  sizeColourQty.forEach((item) => {
+               formData.append("sizeColourQty", JSON.stringify(item))
+            }) */
+
+            formData.append("sizeColourQty",JSON.stringify(sizeColourQty))
+            
             files.forEach(file => {
                 formData.append("files", file)
             })
-            const {data} = await apiClient.post("/products", formData);
+            
+            const { data } = await apiClient.post("/products", formData );
             return data;
         }catch (error) {
             

@@ -44,6 +44,7 @@ export default function ShoppingCart() {
 
   //calculate total price
   let sumTotalPrice
+  let orderCoupon
   sumTotalPrice = cartItems?.reduce((acc, current) => {
     return acc + current?.totalPrice;
   }, 0);
@@ -51,6 +52,7 @@ export default function ShoppingCart() {
   //check if coupon found
   if(coupon){
     sumTotalPrice = sumTotalPrice - (sumTotalPrice * coupon?.discount/100)
+    orderCoupon = coupon?.code;
   }
   //price of the product - (price of product x discount/100)
 
@@ -173,7 +175,7 @@ export default function ShoppingCart() {
               <dt className="flex items-center text-sm text-gray-600">
                 <span>Have coupon code? </span>
               </dt>
-              
+
               <form onSubmit={applyCouponSubmit}>
                 <div className="mt-1">
                   <input
@@ -197,7 +199,9 @@ export default function ShoppingCart() {
                 <dt className="text-base font-medium text-gray-900">
                   Order total
                 </dt>
-                <dd className="text-xl font-medium text-gray-900 ">$ {sumTotalPrice}</dd>
+                <dd className="text-xl font-medium text-gray-900 ">
+                  $ {sumTotalPrice}
+                </dd>
               </div>
             </dl>
 
@@ -205,11 +209,10 @@ export default function ShoppingCart() {
               <Link
                 //  pass data to checkout page
                 to="/order-payment"
-                state = {
-                  {
-                    sumTotalPrice,
-                  }
-                }
+                state={{
+                  sumTotalPrice,
+                  orderCoupon,
+                }}
                 className="w-full px-4 py-3 text-base font-medium text-white bg-indigo-600 border border-transparent rounded-md shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-50"
               >
                 Proceed to Checkout

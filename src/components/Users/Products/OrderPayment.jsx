@@ -1,9 +1,9 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { getCartItemsFromLocalStorageAction } from "../../../redux/slices/cart/cartSlices";
 import AddShippingAddress from "../Forms/AddShippingAddress";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation } from "react-router-dom";
-import { placeOrderAction } from "../../../redux/slices/orders/orderSlices";
+import { placePaypalOrderAction, placeStripeOrderAction } from "../../../redux/slices/orders/orderSlices";
 import { getUserProfileAction } from "../../../redux/slices/users/usersSlice";
 import LoadingComponent from "../../../shared/components/LoadingComponent";
 
@@ -12,7 +12,9 @@ export default function OrderPayment() {
   //get data from location
   const location = useLocation();
 
-  const { sumTotalPrice } = location.state;
+  const { sumTotalPrice, orderCoupon } = location.state;
+  const [paymentProvider, setPaymentProvider] = useState("")
+ 
   const calculateTotalDiscountedPrice = () => {};
 
   //dispatch
@@ -42,18 +44,39 @@ export default function OrderPayment() {
   
   // get shipping address
   const shippingAddress =  profile?.shippingAddress
-  const placeOrderHandler = () => {
-    dispatch(placeOrderAction({shippingAddress, orderItems: cartItems, totalPrice: sumTotalPrice}));
+  const placeStripeOrderHandler = () => {
+    dispatch(
+      placeStripeOrderAction({
+        shippingAddress,
+        orderItems: cartItems,
+        totalPrice: sumTotalPrice,
+        coupon: orderCoupon,
+        
+      })
+    );
     //empty cart Items
-    localStorage.removeItem('cartItems')
+    localStorage.removeItem('cartItems') 
+    
+  }
+  const placePaypalOrderHandler = () => {
+    dispatch(
+      placePaypalOrderAction({
+        shippingAddress,
+        orderItems: cartItems,
+        totalPrice: sumTotalPrice,
+        coupon: orderCoupon,
+        
+      })
+    );
+    //empty cart Items
+    localStorage.removeItem('cartItems') 
+    
   }
 
   const {loading: orderLoading, error: orderErr} = useSelector(state => state?.orders) 
 
   return (
-
     <>
-      
       <div className="bg-gray-50">
         <main className="px-4 pt-16 pb-24 mx-auto max-w-7xl sm:px-6 lg:px-8">
           <div className="max-w-2xl mx-auto lg:max-w-none">
@@ -130,12 +153,20 @@ export default function OrderPayment() {
                     {orderLoading ? (
                       <LoadingComponent />
                     ) : (
-                      <button
-                        onClick={placeOrderHandler}
-                        className="w-full px-4 py-3 text-base font-medium text-white bg-indigo-600 border border-transparent rounded-md shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-50"
+                      <div className="flex flex-col gap-5">
+                        <button
+                          onClick={placeStripeOrderHandler}
+                          className="w-full px-4 py-3 text-base font-medium text-white bg-indigo-600 border border-transparent rounded-md shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-50"
+                        >
+                          Stripe Payment - ${sumTotalPrice}
+                        </button>
+                         <button
+                        onClick={placePaypalOrderHandler}
+                        className="w-full px-4 py-3 text-base font-medium text-white bg-yellow-600 border border-transparent rounded-md shadow-sm hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2 focus:ring-offset-gray-50"
                       >
-                        Confirm Payment - ${sumTotalPrice}
+                        Paypal Payment - ${sumTotalPrice}
                       </button>
+                      </div>
                     )}
                   </div>
                 </div>

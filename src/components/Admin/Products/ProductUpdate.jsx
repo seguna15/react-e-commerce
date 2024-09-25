@@ -5,7 +5,7 @@ import Select from "react-select";
 import makeAnimated from "react-select/animated";
 
 import LoadingComponent from "../../../shared/components/LoadingComponent";
-import { fetchCategoriesAction } from "../../../redux/slices/categories/categoriesSlices";
+import { fetchAccessoriesAction } from "../../../redux/slices/accessories/accessoriesSlices";
 import { fetchBrandsAction } from "../../../redux/slices/brands/brandsSlices";
 import { fetchColorsAction } from "../../../redux/slices/colors/colorsSlice";
 import {  updateProductAction } from "../../../redux/slices/products/productSlices";
@@ -42,12 +42,12 @@ export default function ProductUpdate() {
     };
   });
 
-  //categories
+  //accessories
   useEffect(() => {
-    dispatch(fetchCategoriesAction());
+    dispatch(fetchAccessoriesAction());
   }, [dispatch]);
   //select data from store
-  const { categories } = useSelector((state) => state?.categories);
+  const { accessories } = useSelector((state) => state?.accessories);
 
   //brands
   useEffect(() => {
@@ -165,22 +165,22 @@ export default function ProductUpdate() {
                   onChange={(item) => handleSizeChange(item)}
                 />
               </div>
-              {/* Select category */}
+              {/* Select accessory */}
               <div>
                 <label className="block text-sm font-medium text-gray-700">
-                  Select Category
+                  Select Accessory
                 </label>
                 <select
-                  name="category"
-                  value={formData?.category}
+                  name="accessory"
+                  value={formData?.accessory}
                   onChange={handleOnChange}
                   className="block w-full py-2 pl-3 pr-10 mt-1 text-base border border-gray-300 rounded-md focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
                   
                 >
-                  <option>-- Select Category --</option>
-                  {categories?.map((category) => (
-                    <option key={category?._id} value={category?.name}>
-                      {category.name}
+                  <option>-- Select Accessory --</option>
+                  {accessories?.map((accessory) => (
+                    <option key={accessory?._id} value={accessory?.name}>
+                      {accessory.name}
                     </option>
                   ))}
                 </select>

@@ -130,11 +130,11 @@ export const couponsLinks = [
   },
 ];
 
-export const CategoryLinks = [
-  { name: "Add Category", href: "add-category", icon: CogIcon },
+export const AccessoryLinks = [
+  { name: "Add Accessory", href: "add-accessory", icon: CogIcon },
   {
-    name: "All Categories",
-    href: "manage-category",
+    name: "All Accessories",
+    href: "manage-accessory",
     icon: QuestionMarkCircleIcon,
   },
 ];
@@ -154,3 +154,8 @@ export const brandsLinks = [
     icon: QuestionMarkCircleIcon,
   },
 ];
+
+export const categories = ["babies", "boys", "girls", "men", "women", "unisex"];
+
+  //Sizes
+export const sizes = ["37", "38", "39", "40", "41", "42", "43", "44", "45", "46", "S", "M", "L", "XL", "XXL"];

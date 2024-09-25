@@ -4,29 +4,29 @@ import LoadingComponent from "../../../shared/components/LoadingComponent";
 import NoDataFound from "../../../shared/components/NoDataFound";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
-import { fetchCategoriesAction } from "../../../redux/slices/categories/categoriesSlices";
+import { fetchAccessoriesAction } from "../../../redux/slices/accessories/accessoriesSlices";
 
-export default function ManageCategories() {
+export default function ManageAccessories() {
   //dispatch
   const dispatch = useDispatch();
 
   useEffect(()=>{
-    dispatch(fetchCategoriesAction());
+    dispatch(fetchAccessoriesAction());
   },[dispatch])
 
-  const { categories, loading } = useSelector(state => state?.categories);
+  const { accessories, loading } = useSelector(state => state?.accessories);
   
-  //delete category handler
-  const deleteCategoryHandler = (id) => {};
+  //delete accessory handler
+  const deleteAccessoryHandler = (id) => {};
   return (
     <div className="px-4 sm:px-6 lg:px-8">
       <div className="sm:flex sm:items-center">
         <div className="sm:flex-auto">
           <h1 className="text-xl font-semibold text-gray-900">
-            All Categories
+            All Accessories
           </h1>
           <p className="mt-2 text-sm text-gray-700">
-            A list of all the users in your account including their name, title,
+            A list of all accessories
           </p>
         </div>
         <div className="mt-4 sm:mt-0 sm:ml-16 sm:flex-none">
@@ -35,13 +35,13 @@ export default function ManageCategories() {
             type="button"
             className="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-white bg-indigo-600 border border-transparent rounded-md shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:w-auto"
           >
-            Add New Category
+            Add New Accessory
           </Link>
         </div>
       </div>
       {loading ? (
         <LoadingComponent />
-      ) : categories?.length <= 0 ? (
+      ) : accessories?.length <= 0 ? (
         <NoDataFound />
       ) : (
         <div className="flex flex-col mt-8">
@@ -90,43 +90,43 @@ export default function ManageCategories() {
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200">
-                    {categories?.map((category) => (
-                      <tr key={category?._id}>
+                    {accessories?.map((accessory) => (
+                      <tr key={accessory?._id}>
                         <td className="py-4 pl-4 pr-3 text-sm whitespace-nowrap sm:pl-6">
                           <div className="flex items-center">
                             <div className="flex-shrink-0 w-10 h-10">
                               <img
                                 className="w-10 h-10 rounded-full"
-                                src={category?.image}
-                                alt={category?.name}
+                                src={accessory?.image}
+                                alt={accessory?.name}
                               />
                             </div>
                             <div className="ml-4">
                               <div className="font-medium text-gray-900">
-                                {category?.name}
+                                {accessory?.name}
                               </div>
                             </div>
                           </div>
                         </td>
                         <td className="px-3 py-4 text-sm text-gray-500 whitespace-nowrap">
                           <div className="text-gray-900">
-                            {category?.products?.length}
+                            {accessory?.products?.length}
                           </div>
                         </td>
                         <td className="px-3 py-4 text-sm text-gray-500 whitespace-nowrap">
                           <span className="inline-flex px-2 text-xs font-semibold leading-5 text-green-800 bg-green-100 rounded-full">
-                            {category?.user?.fullname}
+                            {accessory?.user?.fullname}
                           </span>
                         </td>
                         <td className="px-3 py-4 text-sm text-gray-500 whitespace-nowrap">
-                          {new Date(category?.createdAt).toLocaleDateString()}
+                          {new Date(accessory?.createdAt).toLocaleDateString()}
                         </td>
                         {/* edit icon */}
                         <td className="relative py-4 pl-3 pr-4 text-sm font-medium text-left whitespace-nowrap sm:pr-6">
                           <Link
-                            to={`/admin/edit-category/${category?._id}`}
+                            to={`/admin/edit-accessory/${accessory?._id}`}
                             state={{
-                              categoryName: category?.name,
+                              accessoryName: accessory?.name,
                             }}
                             className="text-indigo-600 hover:text-indigo-900"
                           >
@@ -145,13 +145,13 @@ export default function ManageCategories() {
                               />
                             </svg>
 
-                            <span className="sr-only">, {category?.name}</span>
+                            <span className="sr-only">, {accessory?.name}</span>
                           </Link>
                         </td>
                         {/* delete icon */}
                         <td className="relative py-4 pl-3 pr-4 text-sm font-medium text-left whitespace-nowrap sm:pr-6">
                           <button
-                            onClick={() => deleteCategoryHandler(category?._id)}
+                            onClick={() => deleteAccessoryHandler(accessory?._id)}
                             className="text-indigo-600 hover:text-indigo-900"
                           >
                             <svg

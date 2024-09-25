@@ -115,20 +115,20 @@ export default function OrdersList() {
                   <td className="px-3 py-4 text-sm text-gray-500">
                     {parseFloat(order?.totalPrice, 2)}
                   </td>
-                  <td className="py-4 pl-3 pr-4 text-sm font-medium text-right sm:pr-6">
+                  <td className="flex gap-2 py-4 pl-3 pr-4 text-sm font-medium text-right sm:pr-6">
                     {order?.paymentStatus === "Not paid" ? (
                       <Link
                         style={{ cursor: "not-allowed" }}
                         className="text-gray-300"
                       >
-                        Edit
+                        View
                       </Link>
                     ) : (
                       <Link
-                        to={`/admin/orders/${order?._id}`}
+                        to={`/admin/orders-details/${order?._id}`}
                         className="text-indigo-600 hover:text-indigo-900"
                       >
-                        Edit
+                        View
                       </Link>
                     )}
                   </td>

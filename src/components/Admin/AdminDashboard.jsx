@@ -1,7 +1,7 @@
 import { Fragment, useContext, useState } from "react";
 import { Dialog, Menu, Transition } from "@headlessui/react";
 import { Link, Outlet } from "react-router-dom";
-import {ordersLinks,productsLinks,couponsLinks,CategoryLinks,colorsLinks,brandsLinks} from '../../shared/data/data'
+import {ordersLinks,productsLinks,couponsLinks,AccessoryLinks,colorsLinks,brandsLinks} from '../../shared/data/data'
 import {
   Bars3CenterLeftIcon,
   
@@ -25,8 +25,9 @@ export default function AdminDashboard() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   //logoutHandler
-  const logoutHandler = () => {
-    dispatch(logoutAction());
+  const logoutHandler = async () => {
+    await dispatch(logoutAction());
+    window.location.reload();
   };
 
   
@@ -154,7 +155,7 @@ export default function AdminDashboard() {
                     {/* Categories mobile */}
                     <div className="pt-3 mt-3">
                       <div className="px-2 space-y-1">
-                        {CategoryLinks.map((item) => (
+                        {AccessoryLinks.map((item) => (
                           <Link
                             key={item.name}
                             to={item.href}
@@ -284,7 +285,7 @@ export default function AdminDashboard() {
               {/* Categories desktop */}
               <div className="pt-3 mt-3">
                 <div className="px-2 space-y-1">
-                  {CategoryLinks.map((item) => (
+                  {AccessoryLinks.map((item) => (
                     <Link
                       key={item.name}
                       to={item.href}

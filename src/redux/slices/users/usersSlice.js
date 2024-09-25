@@ -60,6 +60,7 @@ export const logoutAction = createAsyncThunk('users/logout', async(payload, {rej
         
         return data;
     } catch (error) {
+        
         return rejectWithValue(error?.response?.data)
     }
 })
@@ -138,11 +139,11 @@ const usersSlice = createSlice({
         builder.addCase(logoutAction.fulfilled, (state, action) => {
             state.userAuth.userInfo = null;
             state.userAuth.loading= false;
-            
         });
         builder.addCase(logoutAction.rejected, (state, action) => {
             state.userAuth.error = action.payload;
             state.userAuth.loading = false;
+            state.user.userInfo= null;
             toast.error(action.payload.message, {
               position: "top-center",
             });

@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 
-export default function CategoryToAdd() {
+export default function AccessoryToAdd() {
 
   return (
     <>
@@ -79,9 +79,9 @@ export default function CategoryToAdd() {
                 <div>
                   <div>
                     <Link
-                      to="/admin/add-category"
+                      to="/admin/add-accessory"
                       className="inline-flex justify-center w-full px-4 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50">
-                      Add Category
+                      Add Accessory
                     </Link>
                   </div>
                 </div>
